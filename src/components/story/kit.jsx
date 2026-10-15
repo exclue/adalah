@@ -221,26 +221,26 @@ export function Marquee({ words, reverse = false }) {
     <div
       ref={rootRef}
       aria-hidden="true"
-      className="overflow-hidden bg-[#0d0917] py-10 md:py-16"
+      className="overflow-hidden border-y border-line bg-cream py-10 md:py-16"
     >
       <div ref={trackRef} className="flex w-max will-change-transform">
         {groups.map((g) => (
           <div
             key={g}
-            className="flex flex-none items-center gap-[0.35em] pr-[0.35em] text-[clamp(4rem,14vw,11rem)] font-semibold leading-none tracking-tight"
+            className="flex flex-none items-center gap-[0.35em] pr-[0.35em] text-[clamp(4rem,14vw,11rem)] font-medium leading-none tracking-tight"
           >
             {words.map((w, i) => (
               <span key={w} className="flex items-center gap-[0.35em]">
                 <span
                   className={
                     i % 2 === 0
-                      ? 'text-transparent [-webkit-text-stroke:1.5px_rgba(196,181,253,0.55)]'
-                      : 'text-white'
+                      ? 'text-transparent [-webkit-text-stroke:1.5px_rgba(121,84,146,0.38)]'
+                      : 'text-purple-900'
                   }
                 >
                   {w}
                 </span>
-                <span className="text-[0.4em] text-purple-400">✦</span>
+                <span className="text-[0.4em] text-purple-500">✦</span>
               </span>
             ))}
           </div>
@@ -418,7 +418,7 @@ export function ProgressBar() {
   return (
     <div
       ref={barRef}
-      className="pointer-events-none fixed left-0 top-0 z-50 h-0.5 w-full origin-left bg-purple-300"
+      className="pointer-events-none fixed left-0 top-0 z-50 h-[3px] w-full origin-left bg-purple-600"
       style={{ transform: 'scaleX(0)' }}
     />
   );
@@ -463,12 +463,12 @@ export function SideNav() {
           aria-label={label}
           className="group flex cursor-pointer items-center gap-3"
         >
-          <span className="text-xs text-white/0 transition-colors duration-300 group-hover:text-white/80">
+          <span className="pointer-events-none rounded-full border border-line bg-paper/90 px-2.5 py-1 text-xs font-medium text-ink-soft opacity-0 shadow-xs backdrop-blur-md transition-all duration-300 group-hover:opacity-100 group-hover:text-ink">
             {label}
           </span>
           <span
             className={`block w-1.5 rounded-full transition-all duration-500 ${
-              active === id ? 'h-6 bg-purple-300' : 'h-1.5 bg-white/30'
+              active === id ? 'h-6 bg-purple-600 shadow-xs' : 'h-1.5 bg-ink/20 group-hover:bg-ink/40'
             }`}
           />
         </button>
@@ -541,16 +541,18 @@ export function Curtain({ onLift }) {
   return (
     <div
       ref={panelRef}
-      className="fixed inset-0 z-[90] flex flex-col justify-between bg-[#0d0917] p-6 md:p-12"
+      className="fixed inset-0 z-[90] flex flex-col justify-between bg-[#23172c] p-6 md:p-12"
     >
-      <span ref={wordRef} className="text-sm text-white/60 opacity-0">
+      <span ref={wordRef} className="text-sm tracking-wide text-[#ece3d4]/70 opacity-0">
         khusus buat Vanvan
       </span>
       <div className="flex items-end justify-between">
-        <span className="text-2xl font-semibold text-purple-300 md:text-4xl">For Vanvan</span>
+        <span className="font-display text-2xl font-medium tracking-tight text-purple-300 md:text-4xl">
+          For Vanvan
+        </span>
         <span
           ref={numRef}
-          className="text-[clamp(4rem,16vw,11rem)] font-semibold leading-none tabular-nums text-white"
+          className="font-display text-[clamp(4rem,16vw,11rem)] font-medium leading-none tabular-nums text-[#faf5ee]"
         >
           000
         </span>

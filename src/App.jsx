@@ -15,25 +15,28 @@ const parseHash = () => {
 function App() {
   const [notesRoute, setNotesRoute] = useState(parseHash);
 
-  // Lenis smooth scroll
+  // Lenis smooth scroll. Instance disimpan di window supaya goTo() di kit.jsx
+  // bisa memakai scroll yang sama (bukan scroll bawaan browser).
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 0.9,
     });
+    window.__lenis = lenis;
 
-    function raf(time) {
+    let rafId = 0;
+    const raf = (time) => {
       lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    const rafId = requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
+    };
+    rafId = requestAnimationFrame(raf);
 
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      window.__lenis = null;
     };
   }, []);
 
@@ -55,7 +58,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0d0917] text-white selection:bg-purple-300 selection:text-purple-950">
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
       <main className="w-full flex-1">
         <StorySection
           onExploreFavorites={() => openNotes('favorit')}

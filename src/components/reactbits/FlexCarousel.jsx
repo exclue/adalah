@@ -72,6 +72,7 @@ const BEND_PRESETS = {
 const STYLE = `
 @keyframes flex-carousel-title { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes flex-carousel-reveal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes flex-carousel-pop { from { opacity: 0; transform: translateY(6px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
 `;
 
 const FIT_ASPECT = { portrait: 0.75, square: 1, landscape: 4 / 3 };
@@ -266,6 +267,8 @@ const FlexCarousel = ({
   interval = 4,
   captions = true,
   captureWheel = true,
+  playBadge = false,
+  badgeLabel = 'Putar video',
   onChange,
   onSelect,
   className = '',
@@ -952,12 +955,12 @@ const FlexCarousel = ({
       }
 
       let nextHover = '';
-      if (pointer.over && !pointer.dragging && introState.done && s.focusOnClick) {
+      if (pointer.over && !pointer.dragging && introState.done && (s.focusOnClick || callbacksRef.current.onSelect)) {
         const hit = instances.find(
           inst => pointer.x >= inst.x0 && pointer.x <= inst.x1 && pointer.y >= inst.y0 && pointer.y <= inst.y1
         );
         if (focus.target > 0) nextHover = 'close';
-        else if (hit) nextHover = 'open';
+        else if (hit) nextHover = s.focusOnClick ? 'open' : 'select';
       }
       if (nextHover !== hover) {
         hover = nextHover;
@@ -1227,7 +1230,7 @@ const FlexCarousel = ({
   return (
     <div
       ref={containerRef}
-      className={`relative h-full w-full cursor-grab touch-pan-y select-none overflow-hidden overscroll-contain outline-none [-webkit-tap-highlight-color:transparent] focus-visible:shadow-[inset_0_0_0_2px_rgba(128,128,140,0.55)] data-[hover=open]:cursor-zoom-in data-[hover=close]:cursor-zoom-out data-[dragging]:cursor-grabbing ${className}`.trim()}
+      className={`group relative h-full w-full cursor-grab touch-pan-y select-none overflow-hidden overscroll-contain outline-none [-webkit-tap-highlight-color:transparent] focus-visible:shadow-[inset_0_0_0_2px_rgba(128,128,140,0.55)] data-[hover=select]:cursor-pointer data-[hover=open]:cursor-zoom-in data-[hover=close]:cursor-zoom-out data-[dragging]:cursor-grabbing ${className}`.trim()}
       style={{ ...style, '--flex-carousel-half': `${Math.min(Math.max(cardHeight, 0.05), 1) * 50}%` }}
       role="region"
       aria-roledescription="carousel"
@@ -1235,25 +1238,52 @@ const FlexCarousel = ({
       tabIndex={0}
     >
       <style>{STYLE}</style>
-      {captions && current && revealed && (
+      {playBadge && current && revealed && !focusOpen && (
         <div
-          className="pointer-events-none absolute inset-x-0 top-[calc(50%_+_var(--flex-carousel-half)_*_var(--flex-carousel-lift,1)_+_22px)] flex flex-col items-center gap-1.5 px-4 text-center animate-[flex-carousel-reveal_900ms_ease_both] motion-reduce:animate-none"
+          className="pointer-events-none absolute inset-x-0 top-[calc(50%_+_var(--flex-carousel-half)_*_var(--flex-carousel-lift,1)_-_54px)] flex justify-center"
           aria-hidden="true"
         >
           <span
             key={active}
-            className="flex max-w-full flex-col items-center text-[15px] font-medium leading-[1.35] text-purple-900 animate-[flex-carousel-title_520ms_cubic-bezier(0.22,1,0.36,1)] motion-reduce:animate-none"
+            className="inline-flex h-9 items-center gap-2 rounded-full border border-white/30 bg-black/50 pl-3 pr-4 text-xs font-medium text-white backdrop-blur-md transition-colors duration-300 animate-[flex-carousel-pop_420ms_cubic-bezier(0.22,1,0.36,1)_both] group-data-[hover=select]:border-purple-300 group-data-[hover=select]:bg-purple-700 motion-reduce:animate-none"
           >
-            {current.title || current.alt}
-            {current.subtitle && <span className="font-normal opacity-60 text-purple-600/80">{current.subtitle}</span>}
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-current" aria-hidden="true">
+              <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z" />
+            </svg>
+            {badgeLabel}
+          </span>
+        </div>
+      )}
+      {captions && current && revealed && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-[calc(50%_+_var(--flex-carousel-half)_*_var(--flex-carousel-lift,1)_+_24px)] flex flex-col items-center gap-3 px-6 text-center animate-[flex-carousel-reveal_900ms_ease_both] motion-reduce:animate-none"
+          aria-hidden="true"
+        >
+          <span
+            key={active}
+            className="flex max-w-full flex-col items-center gap-1 animate-[flex-carousel-title_520ms_cubic-bezier(0.22,1,0.36,1)] motion-reduce:animate-none"
+          >
+            <span className="font-display text-[clamp(20px,2vw,28px)] font-medium leading-tight tracking-tight text-ink">
+              {current.title || current.alt}
+            </span>
+            {current.subtitle && (
+              <span className="line-clamp-2 max-w-[38ch] text-[13px] leading-snug text-ink-soft">
+                {current.subtitle}
+              </span>
+            )}
           </span>
           <span
-            className="inline-flex items-center gap-[3px] text-[12px] leading-none tabular-nums opacity-50 text-purple-700 transition-opacity duration-[400ms] data-[hidden]:opacity-0"
+            className="inline-flex items-center gap-3 text-[12px] leading-none tabular-nums text-ink-soft transition-opacity duration-[400ms] data-[hidden]:opacity-0"
             data-hidden={focusOpen ? '' : undefined}
           >
             <Digits value={active + 1} />
-            <span className="opacity-60">/</span>
-            <span>{String(list.length).padStart(2, '0')}</span>
+            <span className="relative h-[2px] w-24 overflow-hidden rounded-full bg-ink/15">
+              <span
+                className="absolute inset-y-0 left-0 rounded-full bg-purple-600 transition-[width] duration-500 ease-out"
+                style={{ width: `${((active + 1) / list.length) * 100}%` }}
+              />
+            </span>
+            <span className="text-ink/40">{String(list.length).padStart(2, '0')}</span>
           </span>
         </div>
       )}

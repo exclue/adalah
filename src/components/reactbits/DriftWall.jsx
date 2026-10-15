@@ -236,13 +236,13 @@ const DriftWall = ({
     'w-full h-[calc(var(--dw-tile-h)+var(--dw-gap))] [transform-style:preserve-3d]'
   );
   const innerClass = cx(
-    'pointer-events-none absolute inset-[calc(var(--dw-gap)/2)] block overflow-hidden bg-[#0b0b12]',
+    'pointer-events-none absolute inset-[calc(var(--dw-gap)/2)] block overflow-hidden bg-paper-2',
     'rounded-[var(--dw-radius)] opacity-[var(--dw-dim)] [transform:translateZ(0)]',
     'transition-[transform,opacity,box-shadow] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
     'group-[.is-active]/tile:opacity-100 group-[.is-active]/tile:[transform:translateZ(var(--dw-lift))]',
-    'group-[.is-active]/tile:shadow-[0_24px_60px_-18px_rgba(0,0,0,0.7)]',
+    'group-[.is-active]/tile:shadow-[0_20px_45px_-16px_rgba(55,35,70,0.35)]',
     'group-focus-visible/tile:opacity-100 group-focus-visible/tile:[transform:translateZ(var(--dw-lift))]',
-    'group-focus-visible/tile:shadow-[0_24px_60px_-18px_rgba(0,0,0,0.7),0_0_0_2px_rgba(255,255,255,0.9)]'
+    'group-focus-visible/tile:shadow-[0_20px_45px_-16px_rgba(55,35,70,0.35),0_0_0_2px_rgba(121,84,146,0.8)]'
   );
   const imgClass = cx(
     'block h-full w-full select-none object-cover',
@@ -251,7 +251,7 @@ const DriftWall = ({
     'group-[.is-active]/tile:[filter:grayscale(0)_saturate(1.05)] group-focus-visible/tile:[filter:grayscale(0)_saturate(1.05)]'
   );
   const overlayClass = cx(
-    'pointer-events-none absolute inset-0 bg-[var(--dw-overlay)] opacity-[0.42]',
+    'pointer-events-none absolute inset-0 bg-[var(--dw-overlay)] opacity-[0.06]',
     'transition-opacity duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
     'group-[.is-active]/tile:opacity-0 group-focus-visible/tile:opacity-0'
   );
@@ -262,7 +262,7 @@ const DriftWall = ({
         <img
           src={item.image}
           alt={item.title ?? ''}
-          loading="lazy"
+          loading="eager"
           decoding="async"
           draggable={false}
           className={imgClass}

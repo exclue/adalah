@@ -48,6 +48,7 @@ uniform float uIntensity;
 uniform float uScale;
 uniform float uAberration;
 uniform float uDrift;
+uniform float uFocusY;
 uniform float uTime;
 uniform float uReduce;
 uniform vec2 uPointer;
@@ -108,7 +109,8 @@ vec2 coverUV(vec2 uv, vec2 res, vec2 img) {
   } else {
     s.x = ratio;
   }
-  return (uv - 0.5) * s + 0.5;
+  vec2 c = vec2(0.5, 0.5 + (1.0 - s.y) * (uFocusY - 0.5));
+  return (uv - 0.5) * s + c;
 }
 
 void main() {
@@ -259,6 +261,7 @@ class MorphEngine {
         uScale: { value: opts.scale },
         uAberration: { value: opts.aberration },
         uDrift: { value: opts.drift },
+        uFocusY: { value: opts.focusY ?? 0.5 },
         uTime: { value: 0 },
         uReduce: { value: reducedMotion ? 1 : 0 },
         uPointer: { value: [0.5, 0.5] },
@@ -316,6 +319,7 @@ class MorphEngine {
     this.program.uniforms.uAberration.value = opts.aberration;
     this.program.uniforms.uDrift.value = opts.drift;
     this.program.uniforms.uOverlay.value = hexToRgb(opts.overlayColor);
+    this.program.uniforms.uFocusY.value = opts.focusY ?? 0.5;
   }
 
   loop(t) {
@@ -480,6 +484,7 @@ export default function MorphSlider({
   scale = 2.4,
   aberration = 0.35,
   drift = 0.4,
+  focusY = 0.5,
   autoplay = false,
   autoplayDelay = 4,
   loop = true,
@@ -497,7 +502,7 @@ export default function MorphSlider({
   const [hovering, setHovering] = useState(false);
 
   const optsRef = useRef();
-  optsRef.current = { transition, duration, ease, intensity, scale, aberration, drift, overlayColor, loop };
+  optsRef.current = { transition, duration, ease, intensity, scale, aberration, drift, overlayColor, loop, focusY};
 
   useEffect(() => {
     if (!containerRef.current) return undefined;

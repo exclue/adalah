@@ -32,11 +32,11 @@ function getState(now) {
 
 function Unit({ value, label }) {
   return (
-    <div className="flex flex-col items-center rounded-3xl border border-white/10 bg-[#1a1030] px-2 py-5 md:py-8">
-      <span className="text-[clamp(2rem,9vw,5rem)] font-semibold leading-none tabular-nums tracking-tight text-white">
+    <div className="flex flex-col items-center px-1 py-8 md:py-12">
+      <span className="font-display text-[clamp(2.4rem,9vw,6rem)] font-medium leading-none tabular-nums text-ink">
         {value}
       </span>
-      <span className="mt-3 text-xs font-medium text-purple-300 md:text-sm">{label}</span>
+      <span className="mt-3 text-xs text-ink-soft md:text-sm">{label}</span>
     </div>
   );
 }
@@ -58,22 +58,18 @@ export default function BirthdayCountdown() {
   });
 
   return (
-    <section
-      id="countdown"
-      ref={ref}
-      className="bg-[#0d0917] px-4 py-24 md:px-8 md:py-32"
-    >
+    <section id="countdown" ref={ref} className="bg-paper-warm px-5 py-28 md:px-10 md:py-40">
       <div className="mx-auto max-w-4xl text-center">
         {state.isBirthday ? (
           <>
-            <Heart className="mx-auto mb-6 h-10 w-10 animate-pulse text-purple-300" />
+            <Heart className="mx-auto mb-6 h-9 w-9 animate-pulse text-purple-600" />
             <h2
               data-r
-              className="mb-4 text-4xl font-semibold tracking-tight text-white md:text-6xl"
+              className="mb-4 font-display text-[clamp(2.6rem,7vw,5rem)] font-medium leading-[1.02] tracking-tight text-ink"
             >
               selamat ulang tahun!
             </h2>
-            <p data-r className="mx-auto max-w-md text-sm leading-relaxed text-white/70 md:text-base">
+            <p data-r className="mx-auto max-w-md text-sm leading-relaxed text-ink-soft md:text-base">
               Hari ini hari kamu. Semoga semua yang kamu harapin pelan-pelan jadi nyata, dan
               aku masih jadi bagian dari harinya.
             </p>
@@ -82,15 +78,20 @@ export default function BirthdayCountdown() {
           <>
             <h2
               data-r
-              className="mb-3 text-3xl font-semibold tracking-tight text-white md:text-5xl"
+              className="mb-4 font-display text-[clamp(2.4rem,6vw,4.4rem)] font-medium leading-[1.05] tracking-tight text-ink"
             >
               hitung mundur ke hari spesialmu
             </h2>
-            <p data-r className="mx-auto mb-10 max-w-md text-sm leading-relaxed text-white/65 md:text-base">
+            <p data-r className="mx-auto mb-12 max-w-md text-sm leading-relaxed text-ink-soft md:text-base">
               Tinggal sebentar lagi sampai {dateText}.
             </p>
 
-            <div data-r className="grid grid-cols-4 gap-2 md:gap-5" role="timer" aria-live="off">
+            <div
+              data-r
+              className="grid grid-cols-4 divide-x divide-line border-y border-line"
+              role="timer"
+              aria-live="off"
+            >
               <Unit value={state.days} label="hari" />
               <Unit value={pad(state.hours)} label="jam" />
               <Unit value={pad(state.minutes)} label="menit" />

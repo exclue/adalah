@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { animate, stagger } from 'animejs';
-import { ArrowLeft, Heart, Mail, Reply, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, Heart, Mail, Reply, X } from 'lucide-react';
 import DecryptedText from '../reactbits/DecryptedText';
 import { allImages } from '../../data/media';
 import { NOTES } from '../../data/notes';
@@ -62,47 +62,18 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
   );
 }
 
-/* Kartu dengan tilt 3D + cahaya yang ngikutin kursor (gaya TiltedCard + SpotlightCard) */
-function FancyCard({ children, onClick, className = '', tilt = 6 }) {
-  const ref = useRef(null);
-
-  const onMove = (e) => {
-    const el = ref.current;
-    if (!el || prefersReduced()) return;
-    const r = el.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    const rx = (y / r.height - 0.5) * -2 * tilt;
-    const ry = (x / r.width - 0.5) * 2 * tilt;
-    el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.015,1.015,1.015)`;
-    el.style.setProperty('--mx', `${x}px`);
-    el.style.setProperty('--my', `${y}px`);
-  };
-  const onLeave = () => {
-    if (ref.current) ref.current.style.transform = '';
-  };
-
+/* Kartu dasar: satu gaya, satu radius, smooth elevation tanpa efek AI berlebihan */
+function Card({ children, onClick, className = '' }) {
   return (
     <button
-      ref={ref}
       type="button"
       onClick={() => {
         playPop();
         onClick();
       }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className={`group relative block w-full cursor-pointer overflow-hidden text-left transition-transform duration-200 ease-out will-change-transform focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-300 ${className}`}
+      className={`group block w-full cursor-pointer rounded-[14px] border border-line bg-[#fffdf9] p-6 text-left shadow-[0_4px_16px_-4px_rgba(60,40,75,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-300 hover:shadow-[0_12px_28px_-8px_rgba(60,40,75,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600 md:p-7 ${className}`}
     >
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background:
-            'radial-gradient(380px circle at var(--mx,50%) var(--my,50%), rgba(192,132,252,0.22), transparent 55%)',
-        }}
-      />
-      <span className="relative block">{children}</span>
+      {children}
     </button>
   );
 }
@@ -114,38 +85,35 @@ function LetterCard({ note, onOpen }) {
   const excerpt = (hasHer ? note.herText : note.myText).replace(/\s+/g, ' ');
 
   return (
-    <FancyCard
-      onClick={onOpen}
-      className="rounded-[28px] border border-white/10 bg-[#1a1030] p-6 hover:border-purple-300/40 md:p-7"
-    >
-      <span className="mb-5 flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-xs font-medium text-purple-200">
+    <Card onClick={onOpen}>
+      <span className="mb-5 flex items-center justify-between text-xs text-ink-soft">
+        <span className="flex items-center gap-1.5">
           <Mail className="h-3.5 w-3.5" />
           {hasHer ? 'surat dari dia' : 'surat dariku'}
         </span>
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-300/15 text-purple-200">
-          <Heart className="h-4 w-4" fill="currentColor" />
-        </span>
+        <Heart className="h-4 w-4 text-purple-400" />
       </span>
 
-      <span className="mb-3 block text-xl font-bold text-white md:text-2xl">{note.title}</span>
+      <span className="mb-3 block font-display text-[1.7rem] font-medium leading-[1.1] tracking-tight text-ink">
+        {note.title}
+      </span>
 
-      <span className="line-clamp-5 block font-serif text-[15px] italic leading-7 text-white/70">
+      <span className="line-clamp-5 block font-display text-[17px] italic leading-7 text-ink/75">
         “{excerpt}”
       </span>
 
       {hasHer && note.myText && (
-        <span className="mt-5 flex items-center gap-2 rounded-xl bg-purple-200/10 px-3 py-2 text-xs text-purple-200">
+        <span className="mt-5 flex items-center gap-1.5 text-xs text-purple-700">
           <Reply className="h-3.5 w-3.5" />
           ada balasanku di dalamnya
         </span>
       )}
 
-      <span className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-white/55">
+      <span className="mt-6 flex items-center justify-between border-t border-line pt-4 text-xs text-ink-soft">
         <span>{note.date}</span>
-        <span className="font-medium text-purple-200">baca surat</span>
+        <span className="font-medium text-purple-700">baca surat</span>
       </span>
-    </FancyCard>
+    </Card>
   );
 }
 
@@ -154,18 +122,14 @@ const STACK_LEFT = ['left-0', 'left-[72px]', 'left-[36px]'];
 
 function FavoriteCard({ note, noteIndex, onOpen }) {
   return (
-    <FancyCard
-      onClick={onOpen}
-      tilt={9}
-      className="rounded-[28px] border border-purple-300/20 bg-gradient-to-b from-[#241442] to-[#150d27] p-6 hover:border-purple-300/50 md:p-7"
-    >
-      <span className="relative mb-6 block h-44">
+    <Card onClick={onOpen}>
+      <span className="relative mb-7 block h-44">
         {note.items.slice(0, 3).map((item, i) => {
           const src = itemImage(item, seedOf(noteIndex, i));
           return (
             <span
               key={item.name}
-              className={`absolute top-0 block h-40 w-32 overflow-hidden rounded-2xl border-4 border-[#1a1030] bg-purple-300/10 shadow-xl transition-transform duration-300 group-hover:-translate-y-1 ${STACK_LEFT[i]} ${STACK_ROT[i]}`}
+              className={`absolute top-0 block h-40 w-32 overflow-hidden rounded-[6px] border-4 border-[#fffdf9] bg-paper-2 shadow-[0_8px_20px_-10px_rgba(43,36,51,0.5)] transition-transform duration-300 group-hover:-translate-y-1 ${STACK_LEFT[i]} ${STACK_ROT[i]}`}
               style={{ zIndex: i + 1 }}
             >
               {src && (
@@ -182,24 +146,15 @@ function FavoriteCard({ note, noteIndex, onOpen }) {
         })}
       </span>
 
-      <span className="mb-1 flex items-center gap-1.5 text-xs font-medium text-purple-300">
-        <Sparkles className="h-3.5 w-3.5" />
-        {note.category}
+      <span className="mb-1 block text-xs text-ink-soft">{note.category}</span>
+      <span className="mb-2 block font-display text-[1.7rem] font-medium leading-[1.1] tracking-tight text-ink">
+        {note.title}
       </span>
-      <span className="mb-2 block text-xl font-bold text-white md:text-2xl">{note.title}</span>
-      <span className="mb-5 block text-sm leading-relaxed text-white/65">{note.note}</span>
-
-      <span className="flex flex-wrap gap-2">
-        {note.items.map((item) => (
-          <span
-            key={item.name}
-            className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/80"
-          >
-            {item.name}
-          </span>
-        ))}
+      <span className="mb-4 block text-sm leading-relaxed text-ink-soft">{note.note}</span>
+      <span className="block text-sm leading-relaxed text-ink/80">
+        {note.items.map((item) => item.name).join(', ')}
       </span>
-    </FancyCard>
+    </Card>
   );
 }
 
@@ -220,8 +175,7 @@ function NoteModal({ note, noteIndex, onClose }) {
       animate(panelRef.current, {
         opacity: [0, 1],
         translateY: [32, 0],
-        scale: [0.96, 1],
-        duration: 450,
+        duration: 500,
         ease: 'outExpo',
       });
     }
@@ -237,7 +191,7 @@ function NoteModal({ note, noteIndex, onClose }) {
       ref={overlayRef}
       data-lenis-prevent
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm md:items-center md:p-6"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-ink/45 p-0 backdrop-blur-sm md:items-center md:p-6"
     >
       <div
         ref={panelRef}
@@ -245,23 +199,24 @@ function NoteModal({ note, noteIndex, onClose }) {
         aria-modal="true"
         aria-label={note.title}
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[92svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#150d27] md:rounded-3xl"
+        className="flex max-h-[92svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[20px] border border-line bg-paper shadow-[0_25px_60px_-15px_rgba(46,36,54,0.35)] md:rounded-[20px]"
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4 md:px-8 md:py-5">
+        <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4 md:px-8 md:py-5">
           <div>
-            <span className="mb-1 flex items-center gap-1.5 text-xs font-medium text-purple-300">
-              {isLetter ? <Mail className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
+            <span className="mb-1 block text-xs text-ink-soft">
               {isLetter ? note.date : note.category}
             </span>
-            <h3 className="text-lg font-semibold text-white md:text-2xl">{note.title}</h3>
+            <h3 className="font-display text-2xl font-medium leading-tight text-ink md:text-3xl">
+              {note.title}
+            </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             autoFocus
             aria-label="Tutup"
-            className="flex h-9 w-9 flex-none cursor-pointer items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-purple-300"
+            className="flex h-9 w-9 flex-none cursor-pointer items-center justify-center rounded-full border border-line text-ink-soft transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-2 focus-visible:outline-purple-600"
           >
             <X className="h-4 w-4" />
           </button>
@@ -271,24 +226,17 @@ function NoteModal({ note, noteIndex, onClose }) {
         <div data-lenis-prevent className="overflow-y-auto overscroll-contain">
           {isLetter ? (
             <div className="px-5 py-7 md:px-8 md:py-9">
-              {/* Surat dia, di atas */}
               {hasHer && (
                 <>
-                  <p className="mb-3 flex items-center gap-2 text-xs text-white/50">
+                  <p className="mb-4 flex items-center gap-2 text-xs text-ink-soft">
                     <Mail className="h-3.5 w-3.5" />
                     dari {herName}
                   </p>
-                  <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] px-6 pb-7 pt-9 md:px-9 md:pb-9 md:pt-11">
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-6 top-2 font-serif text-7xl leading-none text-purple-400/50 md:left-9"
-                    >
-                      “
-                    </span>
+                  <div className="border-l-2 border-purple-300 pl-5 md:pl-7">
                     {paragraphs(note.herText).map((p, i) => (
                       <p
                         key={i}
-                        className="mb-5 font-serif text-[17px] leading-8 text-white/90 last:mb-0 md:text-xl md:leading-9"
+                        className="mb-5 font-display text-[19px] leading-[1.7] text-ink last:mb-0 md:text-[22px]"
                       >
                         {p}
                       </p>
@@ -296,36 +244,35 @@ function NoteModal({ note, noteIndex, onClose }) {
                   </div>
 
                   {note.myText && (
-                    <div className="my-8 flex items-center gap-3">
-                      <span className="h-px flex-1 bg-white/10" />
-                      <span className="flex items-center gap-1.5 rounded-full bg-purple-200 px-3.5 py-1.5 text-xs font-semibold text-purple-950">
+                    <div className="my-9 flex items-center gap-3">
+                      <span className="h-px flex-1 bg-line" />
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-purple-700">
                         <Reply className="h-3.5 w-3.5" />
                         balasanku
                       </span>
-                      <span className="h-px flex-1 bg-white/10" />
+                      <span className="h-px flex-1 bg-line" />
                     </div>
                   )}
                 </>
               )}
 
-              {/* Balasanmu, di bawah */}
               {note.myText && (
-                <Reveal className="rounded-3xl bg-purple-200 px-6 py-7 text-purple-950 md:px-9 md:py-9">
+                <Reveal className="rounded-[12px] border border-purple-200/80 bg-purple-100/70 px-6 py-7 text-purple-950 md:px-9 md:py-9">
                   {!hasHer && (
-                    <p className="mb-4 flex items-center gap-2 text-xs font-medium text-purple-900/70">
-                      <Heart className="h-3.5 w-3.5" fill="currentColor" />
+                    <p className="mb-4 flex items-center gap-2 text-xs text-purple-800/70">
+                      <Heart className="h-3.5 w-3.5" />
                       buat kamu
                     </p>
                   )}
                   {paragraphs(note.myText).map((p, i) => (
                     <p
                       key={i}
-                      className="mb-5 font-serif text-[17px] leading-8 md:text-xl md:leading-9"
+                      className="mb-5 font-display text-[19px] leading-[1.7] md:text-[22px]"
                     >
                       {p}
                     </p>
                   ))}
-                  <p className="text-right font-serif text-base italic text-purple-900/70">
+                  <p className="text-right font-display text-lg italic text-purple-800/70">
                     dari aku
                   </p>
                 </Reveal>
@@ -333,10 +280,8 @@ function NoteModal({ note, noteIndex, onClose }) {
 
               {note.herAfter && (
                 <Reveal className="mt-5 max-w-[85%]" delay={250}>
-                  <p className="rounded-2xl rounded-bl-md bg-white/10 px-4 py-3 text-sm text-white/85">
-                    <span className="mb-1 block text-[11px] text-white/45">
-                      {herName} bales
-                    </span>
+                  <p className="rounded-[10px] rounded-bl-sm bg-paper-2 px-4 py-3 text-sm text-ink">
+                    <span className="mb-1 block text-[11px] text-ink-soft">{herName} bales</span>
                     {note.herAfter}
                   </p>
                 </Reveal>
@@ -345,7 +290,7 @@ function NoteModal({ note, noteIndex, onClose }) {
           ) : (
             <div className="px-5 py-6 md:px-8 md:py-8">
               {note.note && (
-                <p className="mb-5 text-sm leading-relaxed text-white/70 md:text-base">
+                <p className="mb-6 text-sm leading-relaxed text-ink-soft md:text-base">
                   {note.note}
                 </p>
               )}
@@ -355,7 +300,7 @@ function NoteModal({ note, noteIndex, onClose }) {
                   return (
                     <div
                       key={item.name}
-                      className="overflow-hidden rounded-2xl border border-white/10 bg-[#1a1030]"
+                      className="overflow-hidden rounded-[10px] border border-line bg-[#fffdf9]"
                     >
                       {src && (
                         <img
@@ -367,9 +312,9 @@ function NoteModal({ note, noteIndex, onClose }) {
                         />
                       )}
                       <div className="p-4">
-                        <h4 className="mb-1 text-base font-semibold text-white">{item.name}</h4>
+                        <h4 className="mb-1 text-base font-semibold text-ink">{item.name}</h4>
                         {item.desc && (
-                          <p className="text-xs leading-relaxed text-white/65 md:text-sm">
+                          <p className="text-xs leading-relaxed text-ink-soft md:text-sm">
                             {item.desc}
                           </p>
                         )}
@@ -408,8 +353,10 @@ export default function NotesPage({ initialFilter = 'semua', onClose }) {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    window.__lenis?.stop();
     return () => {
       document.body.style.overflow = prev;
+      window.__lenis?.start();
     };
   }, []);
 
@@ -471,23 +418,23 @@ export default function NotesPage({ initialFilter = 'semua', onClose }) {
     <div
       ref={pageRef}
       data-lenis-prevent
-      className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-[#0d0917] text-white"
+      className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-paper text-ink"
     >
-      <div className="mx-auto max-w-6xl px-4 pb-28 pt-6 md:px-8">
+      <div className="mx-auto max-w-6xl px-5 pb-28 pt-6 md:px-10">
         <button
           type="button"
           onClick={() => {
             playPop();
             close();
           }}
-          className="mb-12 inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-300 md:mb-16"
+          className="mb-14 inline-flex cursor-pointer items-center gap-2 text-sm text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600 md:mb-20"
         >
           <ArrowLeft className="h-4 w-4" />
           kembali
         </button>
 
-        <header className="mb-12 max-w-3xl md:mb-14">
-          <h1 className="mb-5 text-[clamp(2.6rem,8vw,6rem)] font-semibold leading-[1] tracking-tight">
+        <header className="mb-14 max-w-3xl md:mb-16">
+          <h1 className="mb-6 font-display text-[clamp(2.8rem,8vw,6rem)] font-medium leading-[1] tracking-tight text-ink">
             <DecryptedText
               text="catatan kecil tentang kamu"
               animateOn="view"
@@ -497,14 +444,18 @@ export default function NotesPage({ initialFilter = 'semua', onClose }) {
               characters="abcdefghijklmnopqrstuvwxyz"
             />
           </h1>
-          <p className="max-w-lg text-sm leading-relaxed text-white/65 md:text-base">
+          <p className="max-w-lg text-sm leading-relaxed text-ink-soft md:text-base">
             {letters} surat yang aku simpan, dan {favorites} daftar hal yang kamu suka. Ketuk satu
             buat buka.
           </p>
         </header>
 
-        {/* Filter */}
-        <div role="tablist" aria-label="Filter catatan" className="mb-8 flex flex-wrap gap-2">
+        {/* Filter: tab bergaris bawah */}
+        <div
+          role="tablist"
+          aria-label="Filter catatan"
+          className="mb-10 flex gap-7 border-b border-line"
+        >
           {FILTERS.map((f) => {
             const active = filter === f.id;
             return (
@@ -517,10 +468,10 @@ export default function NotesPage({ initialFilter = 'semua', onClose }) {
                   playPop();
                   setFilter(f.id);
                 }}
-                className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-300 ${
+                className={`-mb-px cursor-pointer border-b-2 pb-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 ${
                   active
-                    ? 'bg-purple-200 text-purple-950'
-                    : 'border border-white/20 text-white/80 hover:bg-white/10'
+                    ? 'border-purple-600 font-medium text-ink'
+                    : 'border-transparent text-ink-soft hover:text-ink'
                 }`}
               >
                 {f.label}
@@ -529,7 +480,7 @@ export default function NotesPage({ initialFilter = 'semua', onClose }) {
           })}
         </div>
 
-        {/* Grid bertingkat: tinggi kartu beda-beda, jadi nggak seragam */}
+        {/* Grid bertingkat: tinggi kartu beda-beda */}
         <div ref={gridRef} key={filter} className="columns-1 gap-6 md:columns-2 lg:columns-3">
           {visible.map(({ note, index }) => (
             <div key={note.id} data-card className="mb-6 break-inside-avoid">

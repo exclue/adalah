@@ -69,7 +69,7 @@ export const diaryTitle = 'diary nia';
  */
 export const bouquetLetters = [
   {
-    date: '',
+    date: 'October 15th, 2026',
     paragraphs: [
       'Nia,',
       'Aku nggak pernah pintar merangkai kata, jadi aku selipkan semuanya di sini, di secarik kertas yang kutaruh di antara bunga-bunga ini.',
@@ -82,7 +82,7 @@ export const bouquetLetters = [
     ],
   },
   {
-    date: '',
+    date: 'October 15th, 2026',
     paragraphs: [
       'Nia,',
       'Kuncup mawar ini belum mekar. Seperti banyak hal di antara kita yang masih pelan-pelan tumbuh, dan aku suka menunggunya bersamamu.',
@@ -94,7 +94,7 @@ export const bouquetLetters = [
     ],
   },
   {
-    date: '',
+    date: 'October 15th, 2026',
     paragraphs: [
       'Nia,',
       'Daisy buat hari-hari yang ringan, tulip buat yang hangat, dan baby rose buat hal-hal manis yang cuma kita berdua yang tahu.',

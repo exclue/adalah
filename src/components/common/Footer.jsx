@@ -27,57 +27,34 @@ function WhatsAppIcon({ className = 'w-4 h-4' }) {
   );
 }
 
-export default function Footer() {
-  const socialLinks = [
-    {
-      name: 'Instagram',
-      href: 'https://instagram.com',
-      icon: InstagramIcon,
-      label: 'Instagram'
-    },
-    {
-      name: 'Telegram',
-      href: 'https://t.me',
-      icon: TelegramIcon,
-      label: 'Telegram'
-    },
-    {
-      name: 'WhatsApp',
-      href: 'https://wa.me',
-      icon: WhatsAppIcon,
-      label: 'WhatsApp'
-    }
-  ];
+const socialLinks = [
+  { name: 'Instagram', href: 'https://instagram.com', icon: InstagramIcon },
+  { name: 'Telegram', href: 'https://t.me', icon: TelegramIcon },
+  { name: 'WhatsApp', href: 'https://wa.me', icon: WhatsAppIcon },
+];
 
+export default function Footer() {
   return (
-    <footer className="w-full border-t border-purple-200/50 bg-white/70 dark:bg-[#120d20]/80 backdrop-blur-xl py-6 px-4 md:px-12 transition-colors">
-      <div className="max-w-6xl mx-auto flex flex-row items-center justify-between gap-4">
-        {/* Left: Gentle Branding in horizontal row */}
-        <div className="flex flex-row items-center gap-2">
-          <Heart className="w-4 h-4 text-purple-600 fill-purple-600/20" />
-          <span className="text-xs md:text-sm font-medium text-purple-900/80">
-            Dedicated with love for Vanvan
-          </span>
+    <footer className="w-full border-t border-line bg-paper px-5 py-8 md:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 sm:flex-row">
+        <div className="flex items-center gap-2 text-sm text-ink-soft">
+          <Heart className="h-4 w-4 text-purple-600" />
+          <span>Dedicated with love for Vanvan</span>
         </div>
 
-        {/* Right: Social Links in a horizontal row */}
-        <div className="flex flex-row items-center gap-2 md:gap-4">
-          {socialLinks.map((item) => {
-            const Icon = item.icon;
-            return (
-              <a
-                key={item.name}
-                href={item.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group flex flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50/80 hover:bg-purple-100 text-purple-800 text-xs md:text-sm font-medium border border-purple-200/60 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-                title={item.name}
-              >
-                <Icon className="w-3.5 h-3.5 text-purple-600 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">{item.name}</span>
-              </a>
-            );
-          })}
+        <div className="flex items-center gap-6">
+          {socialLinks.map(({ name, href, icon: Icon }) => (
+            <a
+              key={name}
+              href={href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex cursor-pointer items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-purple-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600"
+            >
+              <Icon className="h-4 w-4" />
+              <span>{name}</span>
+            </a>
+          ))}
         </div>
       </div>
     </footer>

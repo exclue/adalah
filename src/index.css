@@ -1,21 +1,49 @@
 @import "tailwindcss";
 
+/* ================================================================== */
+/* Token desain: semua warna & huruf website ada di sini.              */
+/* Mau ubah suasana? Cukup ubah nilai di blok @theme ini.              */
+/* ================================================================== */
 @theme {
   --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+  /* Netral hangat & lembut (anti silau, ramah mata) */
+  --color-paper: #faf7f2;         /* background utama: linen gading hangat */
+  --color-paper-warm: #f5efe6;    /* variasi section hangat: oatmeal lembut */
+  --color-cream: #f2eae0;         /* krem vintage elegan */
+  --color-cream-deep: #eae0d2;    /* krem meja kayu / kertas tua */
+  --color-paper-2: #efe8dd;       /* permukaan kartu / badge sedikit terangkat */
+  --color-ink: #2e2436;           /* teks utama: plum gelap hangat, bukan hitam pekat */
+  --color-ink-soft: #72647c;      /* teks sekunder: plum abu lembut */
+  --color-line: #e5ddd0;          /* garis pembatas halus dan hangat */
+  --color-night: #241b2c;         /* aksen gelap hangat jika diperlukan */
+
+  /* Ungu hangat (dusty lavender & warm plum): elegan, organik, tidak silau/AI */
+  --color-purple-50: #faf6fb;
+  --color-purple-100: #f2eaf5;
+  --color-purple-200: #e4d5ec;
+  --color-purple-300: #cfb8dd;
+  --color-purple-400: #b293c6;
+  --color-purple-500: #9571ad;
+  --color-purple-600: #795492;
+  --color-purple-700: #624278;
+  --color-purple-800: #4d325e;
+  --color-purple-900: #3a2349;
+  --color-purple-950: #261633;
 }
 
 @layer base {
   :root {
-    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   html {
     font-family: var(--font-sans);
-    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #0d0917;
-    color: #f5f3ff;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
   }
 
   body {
@@ -23,6 +51,8 @@
     padding: 0;
     min-height: 100vh;
     overflow-x: hidden;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
   }
 
   #root {
@@ -33,37 +63,54 @@
     margin: 0;
     padding: 0;
   }
+
+  ::selection {
+    background: var(--color-purple-200);
+    color: var(--color-purple-950);
+  }
 }
 
-/* Custom subtle scrollbar */
+/* Lenis (scroll halus). Aturan wajib dari Lenis, dan
+   "scroll-behavior: smooth" bawaan CSS dihapus karena bentrok dengan Lenis. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Scrollbar tipis */
 ::-webkit-scrollbar {
   width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #f1ebf9;
+  background: var(--color-paper-2);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #c4b5fd;
+  background: var(--color-purple-300);
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #a78bfa;
+  background: var(--color-purple-400);
 }
 
-/* Glassmorphism utilities */
+/* Dipertahankan kalau masih dipakai di file lain */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(233, 213, 255, 0.6);
+  background: rgba(250, 246, 240, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-line);
 }
-
 .glass-panel-dark {
-  background: rgba(19, 13, 34, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  background: rgba(31, 26, 38, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

@@ -183,8 +183,8 @@ function SharedDefs() {
           <stop offset="1" stopColor="#b8730f" />
         </radialGradient>
         <radialGradient id="g-shadow">
-          <stop offset="0" stopColor="#000" stopOpacity="0.45" />
-          <stop offset="1" stopColor="#000" stopOpacity="0" />
+          <stop offset="0" stopColor="#2e2138" stopOpacity="0.22" />
+          <stop offset="1" stopColor="#2e2138" stopOpacity="0" />
         </radialGradient>
         {/* Bikin tepi bunga sedikit tidak simetris biar terasa dilukis */}
         <filter id="f-organic" filterUnits="userSpaceOnUse" x="-20" y="-20" width="440" height="580">
@@ -1185,14 +1185,14 @@ function Letter({ letter, originEl, onClose }) {
         ref={backdropRef}
         onClick={close}
         style={{ opacity: reduced ? 1 : 0 }}
-        className="absolute inset-0 bg-[#06030c]/85 backdrop-blur-md"
+        className="absolute inset-0 bg-ink/50 backdrop-blur-md"
       />
 
       <div
         ref={cardRef}
         style={{
           opacity: reduced ? 1 : 0,
-          filter: 'drop-shadow(0 30px 50px rgba(0,0,0,0.6))',
+          filter: 'drop-shadow(0 25px 45px rgba(46,36,54,0.35))',
         }}
         className="relative flex max-h-[min(88svh,780px)] w-full max-w-[520px] flex-col will-change-transform"
       >
@@ -1394,10 +1394,10 @@ export default function ReasonScene() {
   return (
     <section
       id="photos"
-      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-[#0d0917] py-16"
+      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-paper-warm py-16 md:py-24"
       style={{
         backgroundImage:
-          'radial-gradient(ellipse 55% 50% at 50% 48%, rgba(168,85,247,0.16), transparent 70%)',
+          'radial-gradient(ellipse 60% 55% at 50% 48%, rgba(206,183,221,0.2), transparent 75%)',
       }}
     >
       <style>{CSS}</style>
@@ -1447,12 +1447,12 @@ export default function ReasonScene() {
         ))}
       </div>
 
-      <div className="mt-2 flex items-center justify-center gap-2" aria-hidden="true">
+      <div className="mt-4 flex items-center justify-center gap-2" aria-hidden="true">
         {BOUQUETS.map((b, i) => (
           <span
             key={b.id}
             className={`h-1.5 rounded-full transition-all duration-500 ${
-              i === active ? 'w-7 bg-rose-200/80' : 'w-1.5 bg-white/25'
+              i === active ? 'w-7 bg-purple-600' : 'w-1.5 bg-ink/20'
             }`}
           />
         ))}

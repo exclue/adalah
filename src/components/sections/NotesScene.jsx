@@ -1,9 +1,9 @@
 import { useRef } from 'react';
-import { ArrowRight, Heart, Utensils } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { NOTES } from '../../data/notes';
 import { allImages } from '../../data/media';
 import { playPop } from '../../utils/sound';
-import { useReveal, Magnetic } from '../story/kit';
+import { useReveal } from '../story/kit';
 
 export { NOTES };
 
@@ -19,116 +19,93 @@ export default function NotesScene({ onGoToAllFavorites }) {
 
   const favoriteNotes = NOTES.filter((n) => n.type === 'favorite');
 
+  const open = () => {
+    playPop();
+    onGoToAllFavorites?.();
+  };
+
   return (
-    <section
-      id="favorites-preview"
-      ref={ref}
-      className="bg-[#0d0917] px-4 py-20 md:px-8 md:py-32"
-    >
+    <section id="favorites-preview" ref={ref} className="bg-paper-warm px-5 py-24 md:px-10 md:py-36">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-10 flex flex-col justify-between gap-4 md:mb-14 md:flex-row md:items-end">
+        <div className="mb-14 flex flex-col justify-between gap-6 md:mb-20 md:flex-row md:items-end">
           <div className="max-w-xl">
-            <span
-              data-r
-              className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-purple-300"
-            >
-              <Heart className="h-3.5 w-3.5 fill-purple-300" />
-              hal-hal kesukaan
-            </span>
             <h2
               data-r
-              className="text-3xl font-semibold tracking-tight text-white md:text-5xl"
+              className="font-display text-[clamp(2.6rem,6vw,4.6rem)] font-medium leading-[1.02] tracking-tight text-ink"
             >
-              yang selalu bikin kamu senyum
+              Semua hal hal yang kamu suka
             </h2>
-            <p
-              data-r
-              className="mt-3 text-sm leading-relaxed text-white/65 md:text-base"
-            >
-              Daftar hal-hal kecil yang kamu suka, dari makanan favorit sampai tempat yang bikin kamu nyaman.
+            <p data-r className="mt-5 max-w-md text-sm leading-relaxed text-ink-soft md:text-base">
+              aku simpan semua kesukaan atau hal hal bahagia dan juga long teks yang kamu kasih ke aku
+              walaupun ngga lengkap tapi aku berusaha buat lengkapin dan ingin lebih tau kamu
             </p>
           </div>
 
           <div data-r className="flex-none">
-            <Magnetic>
-              <button
-                type="button"
-                onClick={() => {
-                  playPop();
-                  onGoToAllFavorites?.();
-                }}
-                className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-purple-300/30 bg-purple-500/10 px-5 py-3 text-sm font-medium text-purple-200 transition-all hover:border-purple-300/60 hover:bg-purple-500/20 active:scale-95"
-              >
-                <span>Lihat Semua Kesukaan</span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </button>
-            </Magnetic>
+            <button
+              type="button"
+              onClick={open}
+              className="group inline-flex cursor-pointer items-center gap-2 border-b border-ink/30 pb-1 text-sm font-medium text-ink transition-colors hover:border-purple-600 hover:text-purple-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600"
+            >
+              <span>Lihat Semua Kesukaan</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Tanpa kotak: tiap kolom dibuka garis tipis, isinya daftar bergaris */}
+        <div className="grid grid-cols-1 gap-x-12 gap-y-16 md:grid-cols-3">
           {favoriteNotes.map((note, index) => {
-            const previewItems = note.items || [];
+            const previewItems = (note.items || []).slice(0, 3);
             return (
-              <div
+              <article
                 key={note.id}
                 data-r
-                onClick={() => {
-                  playPop();
-                  onGoToAllFavorites?.();
+                role="button"
+                tabIndex={0}
+                onClick={open}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    open();
+                  }
                 }}
-                className="group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] border border-white/10 bg-[#1a1030]/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-purple-300/40 hover:bg-[#20143d] hover:shadow-[0_12px_30px_-10px_rgba(168,85,247,0.2)] md:p-7"
+                className="group flex cursor-pointer flex-col border-t border-ink/15 pt-6 outline-none transition-colors duration-500 hover:border-purple-600 focus-visible:border-purple-600"
               >
-                <div>
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="rounded-full bg-purple-300/15 px-3 py-1 text-xs font-medium text-purple-200">
-                      {note.category}
-                    </span>
-                    <Heart className="h-4 w-4 text-purple-300/50 transition-colors group-hover:text-purple-300" />
-                  </div>
+                <p className="mb-5 text-sm text-ink-soft">{note.category}</p>
 
-                  <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-purple-200">
-                    {note.title}
-                  </h3>
-                  <p className="mb-6 text-xs leading-relaxed text-white/65">
-                    {note.note}
-                  </p>
+                <h3 className="mb-3 font-display text-[1.9rem] font-medium leading-[1.1] tracking-tight text-ink transition-colors duration-300 group-hover:text-purple-700">
+                  {note.title}
+                </h3>
+                <p className="mb-8 text-sm leading-relaxed text-ink-soft">{note.note}</p>
 
-                  <div className="space-y-2">
-                    {previewItems.slice(0, 3).map((item, itemIdx) => {
-                      const img = itemImage(item, index * 3 + itemIdx);
-                      return (
-                        <div
-                          key={item.name}
-                          className="flex items-center gap-3 rounded-xl bg-black/25 p-2.5 transition-colors group-hover:bg-black/35"
-                        >
-                          {img && (
-                            <img
-                              src={img}
-                              alt=""
-                              draggable={false}
-                              className="h-10 w-10 flex-none rounded-lg object-cover"
-                            />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-semibold text-white">
-                              {item.name}
-                            </p>
-                            <p className="truncate text-[11px] text-white/50">
-                              {item.desc}
-                            </p>
-                          </div>
+                <ul className="divide-y divide-line border-y border-line">
+                  {previewItems.map((item, itemIdx) => {
+                    const img = itemImage(item, index * 3 + itemIdx);
+                    return (
+                      <li key={item.name} className="flex items-center gap-3 py-3">
+                        {img && (
+                          <img
+                            src={img}
+                            alt=""
+                            draggable={false}
+                            className="h-11 w-11 flex-none rounded-[6px] object-cover"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-ink">{item.name}</p>
+                          <p className="truncate text-xs text-ink-soft">{item.desc}</p>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                      </li>
+                    );
+                  })}
+                </ul>
 
-                <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-purple-300">
+                <div className="mt-6 flex items-center justify-between text-sm text-purple-700">
                   <span className="font-medium">Buka detail</span>
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
