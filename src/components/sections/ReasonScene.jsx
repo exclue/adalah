@@ -1429,7 +1429,7 @@ export default function ReasonScene() {
       className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-cream py-10 md:py-12"    >
       <style>{CSS}</style>
       <ScrapStyles />
-      <MomentsBackdrop note={STICKY_TEXT} />
+      <MomentsBackdrop note="" />
       <SharedDefs />
 
       {/* Judul: label kertas bertape */}
@@ -1440,12 +1440,7 @@ export default function ReasonScene() {
             style={SCRAP_NOISE}
           />
           <Washi className="-top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-3" />
-          <h2
-            className={`${HAND} relative text-[clamp(2.4rem,7vw,3.8rem)] font-bold leading-none`}
-            style={{ color: SCRAP_INK }}
-          >
-            {TITLE_TEXT}
-          </h2>
+          <div className="relative h-10 w-44 md:h-12 md:w-56" aria-hidden="true" />
           <Squiggle className="relative mx-auto mt-1.5 w-28" />
           <StarS className="absolute -right-3 -top-3 h-6 w-6 rotate-12" />
         </div>
@@ -1494,14 +1489,9 @@ export default function ReasonScene() {
               {/* caption tulisan tangan */}
               <div className="mt-1 flex justify-center">
                 <span
-                  className={`${HAND} relative inline-block rotate-1 bg-[#fffdf8] px-5 pb-1.5 pt-2.5 text-[1.35rem] leading-none shadow-[0_8px_16px_-8px_rgba(60,35,80,0.45)]`}
-                  style={{ color: SCRAP_INK }}
+                  aria-hidden="true"
+                  className="relative inline-block h-7 w-36 rotate-1 bg-[#fffdf8] shadow-[0_8px_16px_-8px_rgba(60,35,80,0.45)]"
                 >
-                  <Washi
-                    className="-top-2.5 left-1/2 h-5 w-14 -translate-x-1/2 -rotate-3"
-                    color={TAPES[2]}
-                  />
-                  {CAPTIONS[i] ?? ''}
                 </span>
               </div>
             </div>
@@ -1520,11 +1510,9 @@ export default function ReasonScene() {
         ))}
       </div>
 
-      <p className={`${HAND} relative z-10 mt-3 px-6 text-center text-lg text-ink-soft`}>
-        {HINT_TEXT}{' '}
-        <HeartS className="inline-block h-4 w-4 align-[-2px]" />
+      <p className="relative z-10 mt-3 flex justify-center" aria-hidden="true">
+        <HeartS className="h-5 w-5" />
       </p>
-
       {openIdx !== null &&
         createPortal(
           <Letter

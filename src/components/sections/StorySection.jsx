@@ -539,7 +539,7 @@ function MomentsScene() {
       className="relative flex min-h-svh flex-col overflow-hidden bg-cream pb-14 pt-24 md:pb-20 md:pt-32"
     >
       <ScrapStyles />
-      <MomentsBackdrop />
+      <MomentsBackdrop note="" />
 
       {/* Judul: label kertas + sticky note (rotasi di elemen dalam, biar tidak bentrok dengan data-r) */}
       <div className="relative z-10 mx-auto mb-10 flex w-full max-w-6xl flex-col gap-8 px-5 md:mb-12 md:flex-row md:items-end md:gap-12 md:px-10">
@@ -915,7 +915,7 @@ export default function StorySection({ onExploreFavorites }) {
         ]}
       />
       <ReasonScene />
-      <MomentsScene />
+      <MomentsScene note="" />
       <NotesScene onGoToAllFavorites={onExploreFavorites} />
       <ScrapbookScene />
       <BirthdayCountdown />

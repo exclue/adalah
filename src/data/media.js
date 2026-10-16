@@ -36,6 +36,13 @@ const THUMB_MAP = toMap(
   })
 );
 
+// lookup toleran: abaikan semua spasi & huruf besar/kecil
+const squash = (s) => norm(s).replace(/\s+/g, '').toLowerCase();
+const toLooseMap = (map) =>
+  Object.fromEntries(Object.entries(map).map(([k, v]) => [squash(k), v]));
+const IMG_LOOSE = toLooseMap(IMG_MAP);
+const THUMB_LOOSE = toLooseMap(THUMB_MAP);
+const VID_LOOSE = toLooseMap(VID_MAP);
 // Semua foto di src/assets/images, urut alfabet berdasarkan nama file
 const IMAGE_ENTRIES = Object.entries(IMG_MAP).sort(([a], [b]) => (a < b ? -1 : 1));
 
@@ -65,15 +72,14 @@ const VIDEO_DATA = [
   { name: 'WhatsApp Video 2026-10-11 at 9.48.57 PM (1).mp4',  thumb: 'WhatsApp Video 2026-10-11 at 9.48.57 PM (1).jpeg',  thumbType: 'vid' },
   { name: 'WhatsApp Video 2026-10-11 at 9.48.57 PM.mp4',      thumb: 'WhatsApp Video 2026-10-11 at 9.48.57 PM.jpeg',      thumbType: 'vid' },
   // Video baru: thumbnail fallback ke foto dengan tanggal terdekat
-  { name: 'WhatsApp Video 2026-10-12 at 7.03.04 AM.mp4',      thumb: 'WhatsApp Image 2026-10-12 at 12.09.27 AM.jpeg',     thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-12 at 7.03.04 AM (1).mp4',  thumb: 'WhatsApp Image 2026-10-12 at 12.09.03 AM.jpeg',     thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-13 at 6.36.56 PM.mp4',      thumb: 'WhatsApp Image 2026-10-13 at 8.38.38 AM.jpeg',      thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 8.05.13 AM.mp4',      thumb: 'WhatsApp Image 2026-10-15 at 7.48.52 AM.jpeg',      thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 8.05.50 AM (1).mp4',  thumb: 'WhatsApp Image 2026-10-15 at 7.48.52 AM.jpeg',      thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 4.43.50 PM.mp4',      thumb: 'WhatsApp Image 2026-10-14 at 5.15.18 PM (1).jpeg',  thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 7.21.16 PM.mp4',      thumb: 'WhatsApp Image 2026-10-14 at 5.15.18 PM.jpeg',      thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 7.21.36 PM.mp4',      thumb: 'WhatsApp Image 2026-10-14 at 3.26.05 PM.jpeg',      thumbType: 'img' },
-  { name: 'WhatsApp Video 2026-10-15 at 7.21.37 PM.mp4',      thumb: 'WhatsApp Image 2026-10-14 at 7.01.57 AM.jpeg',      thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-12 at 7.03.04 AM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.01 PM.jpeg',     thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-13 at 6.36.56 PM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.01 PM (1).jpeg', thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 8.05.13 AM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.02 PM.jpeg',     thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 8.05.50 AM (1).mp4',  thumb: 'WhatsApp Image 2026-10-16 at 10.10.02 PM (1).jpeg', thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 4.43.50 PM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.02 PM (2).jpeg', thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 7.21.16 PM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.02 PM (3).jpeg', thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 7.21.36 PM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.03 PM .jpeg',    thumbType: 'img' },
+  { name: 'WhatsApp Video 2026-10-15 at 7.21.37 PM.mp4',      thumb: 'WhatsApp Image 2026-10-16 at 10.10.03 PM (1).jpeg', thumbType: 'img' },
 ];
 
 // ----------------------------------------------------------------
@@ -87,12 +93,18 @@ export const allImages = IMAGE_ENTRIES.map(([name, url], index) => ({
 }));
 
 export const allVideos = VIDEO_DATA.map(({ name, thumb, thumbType }, index) => {
-  const posterMap = thumbType === 'img' ? IMG_MAP : THUMB_MAP;
-  const poster = thumb ? posterMap[norm(thumb)] ?? null : null;
-  const url = VID_MAP[norm(name)] ?? '';
+  const exact = thumbType === 'img' ? IMG_MAP : THUMB_MAP;
+  const loose = thumbType === 'img' ? IMG_LOOSE : THUMB_LOOSE;
+  const poster = thumb
+    ? (THUMB_MAP[norm(thumb)] ?? THUMB_LOOSE[squash(thumb)] ??
+      IMG_MAP[norm(thumb)] ?? IMG_LOOSE[squash(thumb)] ?? null)
+    : null;
+  const url = VID_MAP[norm(name)] ?? VID_LOOSE[squash(name)] ?? '';
 
   if (!url) console.warn('[media] video tidak ketemu:', name);
-  if (thumb && !poster) console.warn('[media] thumbnail tidak ketemu:', thumb);
+  if (thumb && !poster) {
+    console.warn('[media] thumbnail tidak ketemu:', thumb);
+  }
 
   return {
     id: `vid-${index + 1}`,
@@ -183,10 +195,10 @@ const videoCaptions = [
   { title: 'KAMUU LUCUU BANGETT SIII',          subtitle: 'SKNFJKA KOK BISA SE GEMESS INIII' },
   { title: 'AKUU SUKAA SEMUA VIDEONYA',         subtitle: 'SERINGG SERINGG KASIH YAA MWEHWEH' },
   { title: 'WADUHHH KAKKK',                     subtitle: 'CAKEEPP BANGETT MASYAALLAH' },
-  { title: 'AOSHDA HEEYY LUCU BANGET HEYY',    subtitle: 'TERLALU LUCUU' },
+  { title: 'AOSHDA HEEYY LUCU BANGET HEYY',     subtitle: 'TERLALU LUCUU' },
   { title: 'YANGG INI BIKIN GEMES',             subtitle: 'BISAA GA SIH NEMBUS LAYAR AJSDNAJ' },
   { title: 'YAALLAH KENA BANGET KE HATI',       subtitle: 'HIDDEN GEM ADJSNIJASND' },
-  { title: 'EH SENYUM DIA, EH MANIS BANGET',   subtitle: 'BISA GA DI KONDISIKAN MANISNYA, DIABETES NI' },
+  { title: 'EH SENYUM DIA, EH MANIS BANGET',    subtitle: 'BISA GA DI KONDISIKAN MANISNYA, DIABETES NI' },
   { title: 'ADUH GA KUWAT',                     subtitle: 'LOOKS LIKE AN ANGEL' },
   { title: 'UKHTIII MASYAALLAH UKHTII',         subtitle: 'MAAF YAHH GILAA, MEMANG UDAH TERGILA GILA' },
   { title: 'PINKKKPINKKK CANTIIINYAA',          subtitle: 'ALSMDANS GABISA BERKATA KATA LAGI' },
@@ -197,13 +209,13 @@ const videoCaptions = [
   { title: 'OKEEE MY BABYYY',                   subtitle: 'MY BABY ATAU MINEEE' },
   { title: 'YAALLAH SOSOK ASELI NERD GIRL KAH', subtitle: 'GATAU LAGI DEH BISA SECAKEP INI MAKAN APAAN SI' },
   { title: 'YAAMPUN MASYAALLAH',                subtitle: 'IYAA IYA INI AKU UDAH JATOH KE PESONA KAMU' },
-  { title: 'CAKEP BANGET ASTAGHFIRULLAHHH',     subtitle: 'INI BENERAN MANUSIA APA MALAIKAT SIHH' },
-  { title: 'HEIII LUCU BANGET DIII',            subtitle: 'MINTA AMPUN LIAT KELUCUANNYAA' },
-  { title: 'WOYYY CANTIK BANGET WOYY',          subtitle: 'AMPUN DEHH GABISA MOVE ON DARI VIDEO INI' },
-  { title: 'JANGAN GITU DONG BIKIN MELELEH',    subtitle: 'TOLONG LIAT CARA DIA SENYUM ASTAGAAAA' },
-  { title: 'DUHH INI ORANG SIAPA SIH',          subtitle: 'KOK BISA SEGEMES DAN SECANTIK INI SEKALIGUS' },
-  { title: 'ADUHHH MANJAA BANGETTT',            subtitle: 'PENGEN NEMENIN TIAP HARI ASLINYA' },
-  { title: 'EH CANTIKNYA GAK NAHAN INI',        subtitle: 'SERIUS TIAP GERAK SELALU BIKIN SALTING' },
+  { title: 'SINCHANNN KUUU',                    subtitle: 'WAHAHAHWH BAKSOO URATT' },
+  { title: 'CANTIK BANGET KKK MASYAALLAH',      subtitle: 'SUJUUDD SYUKURR DAPET CEWE KAYA KAMUU' },
+  { title: 'AKUU GATAU LAGIII NIAAA',           subtitle: 'KAMUU MAKANNYA APASIIII' },
+  { title: 'WEETTT SI SYENTILLL',               subtitle: 'NAYKILLA DEPOKKK NIEEE' },
+  { title: 'WEETT WETTT MUNDURANN KAK',         subtitle: 'CANTIKNYA KELEWATAN' },
+  { title: 'ADUHHAAIIIII SAALLAHH',             subtitle: 'BOBOOO BESOKKK SAMA KAMU LAGI' },
+  { title: 'GAJFNJANFJ GATAUU LAGI AKU',        subtitle: 'AKU BENER BENER GILAA SAMA KAMUU' },
   { title: 'MASYAALLAH TABARAKALLAH',           subtitle: 'BENERAN CIPTAAN ALLAH YANG PALING INDAH' },
 ];
 
