@@ -544,11 +544,11 @@ export function Curtain({ onLift }) {
       className="fixed inset-0 z-[90] flex flex-col justify-between bg-[#23172c] p-6 md:p-12"
     >
       <span ref={wordRef} className="text-sm tracking-wide text-[#ece3d4]/70 opacity-0">
-        khusus buat Vanvan
+        .
       </span>
       <div className="flex items-end justify-between">
         <span className="font-display text-2xl font-medium tracking-tight text-purple-300 md:text-4xl">
-          For Vanvan
+          .
         </span>
         <span
           ref={numRef}

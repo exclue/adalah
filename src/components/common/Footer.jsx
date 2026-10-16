@@ -1,4 +1,20 @@
-import { Heart } from 'lucide-react';
+import {
+  INK,
+  HAND,
+  NOISE,
+  TAPES,
+  HeartS,
+  StarS,
+  Daisy,
+  Washi,
+  ScrapStyles,
+  float,
+} from '../story/scrap';
+
+/* ---------------- Pengaturan teks ---------------- */
+const NOTE_LINES = ['dibuat pelan-pelan,', 'pakai sayang.'];
+const SIGN_OFF = 'dibuat Oktober 2026';
+/* ------------------------------------------------- */
 
 function InstagramIcon({ className = 'w-4 h-4' }) {
   return (
@@ -33,29 +49,106 @@ const socialLinks = [
   { name: 'WhatsApp', href: 'https://wa.me', icon: WhatsAppIcon },
 ];
 
+// Kemiringan tiap tag (ditulis utuh supaya terbaca Tailwind)
+const TILTS = ['-rotate-2', 'rotate-1', '-rotate-1'];
+
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-line bg-paper px-5 py-8 md:px-12">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 sm:flex-row">
-        <div className="flex items-center gap-2 text-sm text-ink-soft">
-          <Heart className="h-4 w-4 text-purple-600" />
+    <footer className="relative w-full overflow-hidden bg-cream px-5 pb-10 pt-16 md:px-12">
+      <ScrapStyles />
+
+      {/* alas titik-titik + serat kertas */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(121,84,146,.22) 1.2px, transparent 1.4px)',
+          backgroundSize: '26px 26px',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.2] mix-blend-multiply"
+        style={NOISE}
+      />
+
+      {/* garis jahitan di atas */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-5 top-6 border-t-2 border-dashed border-purple-300/70 md:inset-x-12"
+      />
+
+      {/* hiasan sudut */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <Daisy
+          className="sb-anim absolute -bottom-5 -left-5 h-24 w-24 rotate-12 drop-shadow-md md:h-28 md:w-28"
+          style={float(9)}
+        />
+        <StarS
+          className="sb-anim absolute right-[8%] top-12 h-6 w-6 rotate-12"
+          style={float(6, 0.4)}
+        />
+        <HeartS
+          className="sb-anim absolute bottom-6 right-[6%] hidden h-7 w-7 -rotate-12 md:block"
+          style={float(7.5, 1.2)}
+        />
+        <StarS
+          className="sb-anim absolute bottom-10 left-[26%] hidden h-5 w-5 -rotate-6 md:block"
+          style={float(8, 0.8)}
+          fill="#f4b6c8"
+        />
+      </div>
+
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center justify-between gap-9 sm:flex-row">
+        {/* sticky note kecil */}
+        <div className="relative -rotate-1 bg-[#fbeaa9] px-7 pb-5 pt-8 shadow-[0_10px_18px_-8px_rgba(60,35,80,0.45)]">
+          <Washi
+            className="-top-3 left-1/2 h-6 w-20 -translate-x-1/2 rotate-2"
+            color={TAPES[0]}
+          />
+          <p className={`${HAND} text-[1.7rem] leading-[1.1]`} style={{ color: INK }}>
+            {NOTE_LINES.map((line, i) => (
+              <span key={i} className="block">
+                {line}
+                {i === NOTE_LINES.length - 1 && (
+                  <>
+                    {' '}
+                    <HeartS className="inline-block h-6 w-6 align-[-4px]" />
+                  </>
+                )}
+              </span>
+            ))}
+          </p>
         </div>
 
-        <div className="flex items-center gap-6">
-          {socialLinks.map(({ name, href, icon: Icon }) => (
+        {/* link sosial: tag kertas bertape */}
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-5">
+          {socialLinks.map(({ name, href, icon: Icon }, i) => (
             <a
               key={name}
               href={href}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex cursor-pointer items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-purple-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600"
+              className={`${HAND} group relative inline-flex ${TILTS[i % TILTS.length]} cursor-pointer items-center gap-2 bg-[#fffaf2] px-5 pb-2 pt-3 text-[1.5rem] leading-none shadow-[0_8px_14px_-8px_rgba(60,35,80,0.5)] transition-all duration-300 hover:-translate-y-1 hover:rotate-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600`}
+              style={{ color: INK }}
             >
-              <Icon className="h-4 w-4" />
+              <Washi
+                className="-top-2.5 left-1/2 h-4 w-12 -translate-x-1/2 -rotate-3"
+                color={TAPES[(i + 1) % TAPES.length]}
+              />
+              <Icon className="h-5 w-5 text-purple-600 transition-transform duration-300 group-hover:scale-110" />
               <span>{name}</span>
             </a>
           ))}
         </div>
       </div>
+
+      <p
+        className={`${HAND} relative mt-10 text-center text-xl opacity-70`}
+        style={{ color: INK }}
+      >
+        {SIGN_OFF}
+      </p>
     </footer>
   );
 }

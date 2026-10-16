@@ -38,8 +38,11 @@ import {
   TAPES,
   HeartS,
   StarS,
+  Daisy,
   Squiggle,
   Washi,
+  PatchButton,
+  NoteButton,
   ScrapStyles,
   MomentsBackdrop,
 } from '../story/scrap';
@@ -204,49 +207,81 @@ return (
       {/* Gradasi HP (bawah), biar teks kebaca di atas foto full */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[62svh] bg-gradient-to-t from-paper via-paper/85 to-transparent md:hidden" />
 
-      {/* Teks: bawah di HP, tengah di desktop */}
+            {/* Teks: bawah di HP, tengah di desktop */}
       <div
         data-copy
         className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-6 pb-14 pt-24 md:justify-center md:px-12 md:pb-0 lg:px-16"
       >
         <div className="max-w-5xl">
+          <div data-fade>
+            <p
+              className={`${HAND} mb-1 text-[2rem] leading-none md:text-[2.5rem]`}
+              style={{ color: INK }}
+            >
+              psst, ini buat kamu{' '}
+              <HeartS className="inline-block h-6 w-6 align-[-3px] md:h-7 md:w-7" />
+            </p>
+          </div>
+
           <h1
-            className={`${DISPLAY} mb-4 text-[clamp(2.7rem,12.5vw,4.5rem)] leading-[0.92] text-ink md:mb-7 md:text-[clamp(3.4rem,14vw,10.5rem)]`}
+            className={`${DISPLAY} mb-3 text-[clamp(3.4rem,11vw,8.5rem)] leading-[0.92] text-ink md:mb-4`}
           >
-            <Line text="HALAAWWW" />
-            <Line text="NIAAA" />
+            <Line text="Halaawww" />
+            <span className="block italic md:ml-[0.55em]">
+              <Line text="Niaaa" />
+            </span>
           </h1>
 
-          <p
-            data-fade
-            className="mb-6 max-w-md text-sm leading-relaxed text-ink-soft md:mb-9 md:text-base"
-          >
-            MAAAFF YAAHH LAMAAA EHEHHE AKUU NGEBUAT INII DARI HARI SENINN.
-            DISINII TENTANGG KAMUU SEMUAA SEMOGA KAMU SUKAA YAA.
-            kamuu scroll scroll ajaaa
-          </p>
+          <div data-fade className="mb-6 md:mb-8">
+            <Squiggle className="ml-1 w-32 md:w-44" />
+          </div>
 
-          <div data-fade className="pointer-events-auto flex flex-wrap items-center gap-3">
-            <Magnetic>
-              <button
-                onClick={() => goTo('gallery')}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#855792]/40 bg-gradient-to-b from-[#6b4375] to-[#54325c] px-6 py-3 text-sm font-medium text-[#faf6f0] shadow-[0_4px_16px_-2px_rgba(84,50,92,0.35),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:from-[#764b81] hover:to-[#5e3867] hover:shadow-[0_8px_24px_-4px_rgba(84,50,92,0.45)] active:scale-95"
+          <div data-fade className="mb-7 max-w-md md:mb-9">
+            <div className="relative -rotate-1 bg-[#fffaf2]/90 px-6 pb-5 pt-7 shadow-[0_14px_28px_-12px_rgba(40,20,70,0.5)]">
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.28] mix-blend-multiply"
+                style={NOISE}
+              />
+              <Washi
+                className="-top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-2"
+                color={TAPES[0]}
+              />
+              <Daisy className="absolute -right-5 -top-6 h-12 w-12 rotate-12 drop-shadow" />
+              <p
+                className={`${HAND} relative text-[1.5rem] leading-[1.2] lowercase md:text-[1.65rem]`}
+                style={{ color: INK }}
               >
+                MAAAFF YAAHH LAMAAA EHEHHE AKUU NGEBUAT INII DARI HARI SENINN. DISINII TENTANGG
+                KAMUU SEMUAA SEMOGA KAMU SUKAA YAA.{' '}
+                <span
+                  className="px-1"
+                  style={{
+                    background: 'linear-gradient(transparent 55%, rgba(246,223,156,0.95) 55%)',
+                  }}
+                >
+                  kamuu scroll scroll ajaaa
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div data-fade className="pointer-events-auto flex flex-wrap items-center gap-4">
+            <Magnetic>
+              <PatchButton onClick={() => goTo('gallery')}>
                 <span>Lanjutt</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
+                <ArrowRight className="h-5 w-5" />
+              </PatchButton>
             </Magnetic>
             <Magnetic>
-              <button
+              <NoteButton
                 onClick={() => {
                   playPop();
                   onExploreFavorites?.();
                 }}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-[#fffdf9] px-6 py-3 text-sm font-medium text-ink shadow-xs transition-all hover:bg-paper-2 hover:border-purple-200 active:scale-95"
               >
-                <Lightbulb className="h-4 w-4 text-purple-600" />
+                <Lightbulb className="h-5 w-5 text-purple-600" />
                 <span>Penceett</span>
-              </button>
+              </NoteButton>
             </Magnetic>
           </div>
         </div>
@@ -288,7 +323,7 @@ return (
         data-cue
         className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 text-xs text-ink/60 md:bottom-6 md:left-auto md:right-8 md:translate-x-0"
       >
-        <span>scroll</span>
+      <span className={`${HAND} text-xl`}>scroll yaa</span>
         <span data-bob>
           <ChevronDown className="h-4 w-4" />
         </span>
@@ -682,7 +717,7 @@ function ClosingScene({ onExploreFavorites }) {
   const burstRef = useRef(null);
   const photo = allImages[5] ?? allImages[0];
 
-  useScene(
+    useScene(
     sceneRef,
     (scene) => {
       if (prefersReduced()) return { onProgress: () => {} };
@@ -691,6 +726,7 @@ function ClosingScene({ onExploreFavorites }) {
       const lines = scene.querySelectorAll('[data-m]');
       const sub = scene.querySelector('[data-sub]');
       const cta = scene.querySelector('[data-cta]');
+      const deco = scene.querySelector('[data-deco]');
 
       return {
         onProgress(p) {
@@ -706,6 +742,7 @@ function ClosingScene({ onExploreFavorites }) {
           const s = seg(p, 0.65, 0.82);
           sub.style.opacity = s;
           sub.style.transform = `translate3d(0, ${(1 - s) * 24}px, 0)`;
+          if (deco) deco.style.opacity = seg(p, 0.7, 0.9);
 
           const c = seg(p, 0.78, 0.92);
           cta.style.opacity = c;
@@ -771,44 +808,81 @@ function ClosingScene({ onExploreFavorites }) {
 
         <div ref={burstRef} className="pointer-events-none absolute inset-0 z-20 overflow-hidden" />
 
-        <div className="absolute inset-0 z-10 flex items-center px-6 md:px-16">
-          <div className="mx-auto w-full max-w-3xl text-center">
+                <div className="absolute inset-0 z-10 flex items-center px-6 md:px-16">
+          <div className="relative mx-auto w-full max-w-3xl text-center">
+            {/* hiasan: muncul bareng paragraf */}
+            <div
+              data-deco
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-2 -inset-y-6"
+            >
+              <Daisy className="absolute -left-2 top-0 h-16 w-16 -rotate-12 drop-shadow-md md:-left-10 md:h-20 md:w-20" />
+              <StarS className="absolute right-2 top-2 h-7 w-7 rotate-12 md:-right-6" />
+              <HeartS className="absolute -right-1 bottom-16 h-8 w-8 -rotate-12 md:-right-12" />
+              <StarS
+                className="absolute -left-1 bottom-24 hidden h-6 w-6 -rotate-6 md:block"
+                fill="#f4b6c8"
+              />
+            </div>
+
+            <div className="pointer-events-none mb-1">
+              <Mask>
+                <span
+                  className={`${HAND} text-[2rem] leading-none md:text-[2.6rem]`}
+                  style={{ color: INK }}
+                >
+                  buat kamu, yang paling kusayang
+                </span>
+              </Mask>
+            </div>
+
             <h2
-              className={`${DISPLAY} pointer-events-none mb-6 text-[clamp(2.8rem,9vw,6rem)] leading-[1.02] text-ink`}
+              className={`${DISPLAY} pointer-events-none mb-4 text-[clamp(2.8rem,8vw,5.6rem)] leading-[1] text-ink`}
             >
               <Mask>Terima kasih</Mask>
-              <Mask>sudah ada.</Mask>
+              <Mask>
+                <span className="italic">sudah ada.</span>
+              </Mask>
             </h2>
 
-            <p
-              data-sub
-              className="pointer-events-none mx-auto mb-10 max-w-md text-sm leading-relaxed text-ink-soft md:text-base"
-            >
-              Kamu bikin hari biasa terasa spesial dan hari yang berat terasa lebih ringan. Kalau
-              kamu butuh tahu satu hal: aku selalu di sini, nyemangatin kamu.
-            </p>
-
-            <div data-cta className="flex flex-wrap items-center justify-center gap-3">
-              <Magnetic>
-                <button
-                  onClick={burst}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#855792]/40 bg-gradient-to-b from-[#6b4375] to-[#54325c] px-7 py-3.5 text-sm font-medium text-[#faf6f0] shadow-[0_4px_16px_-2px_rgba(84,50,92,0.35),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:from-[#764b81] hover:to-[#5e3867] hover:shadow-[0_8px_24px_-4px_rgba(84,50,92,0.45)] active:scale-95"
+            <div data-sub className="pointer-events-none mx-auto mb-9 max-w-md">
+              <Squiggle className="mx-auto mb-6 w-36" />
+              <div className="relative rotate-1 bg-[#fffaf2]/90 px-6 pb-5 pt-7 shadow-[0_14px_28px_-12px_rgba(40,20,70,0.5)]">
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.28] mix-blend-multiply"
+                  style={NOISE}
+                />
+                <Washi
+                  className="-top-3 left-1/2 h-6 w-24 -translate-x-1/2 -rotate-2"
+                  color={TAPES[1]}
+                />
+                <p
+                  className={`${HAND} relative text-center text-[1.5rem] leading-[1.2] md:text-[1.65rem]`}
+                  style={{ color: INK }}
                 >
-                  <Heart className="h-4 w-4 fill-current" />
+                  Kamu bikin hari biasa terasa spesial dan hari yang berat terasa lebih ringan.
+                  Kalau kamu butuh tahu satu hal: aku selalu di sini, nyemangatin kamu.
+                </p>
+              </div>
+            </div>
+
+            <div data-cta className="flex flex-wrap items-center justify-center gap-4">
+              <Magnetic>
+                <PatchButton onClick={burst}>
+                  <Heart className="h-5 w-5 fill-current" />
                   <span>aku sayang kamu</span>
-                </button>
+                </PatchButton>
               </Magnetic>
               <Magnetic>
-                <button
+                <NoteButton
                   onClick={() => {
                     playPop();
                     onExploreFavorites?.();
                   }}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-[#fffdf9] px-6 py-3.5 text-sm font-medium text-ink shadow-xs transition-all hover:bg-paper-2 hover:border-purple-200 active:scale-95"
                 >
-                  <Utensils className="h-4 w-4 text-purple-600" />
+                  <Utensils className="h-5 w-5 text-purple-600" />
                   <span>Buka Menu Kesukaan</span>
-                </button>
+                </NoteButton>
               </Magnetic>
             </div>
           </div>

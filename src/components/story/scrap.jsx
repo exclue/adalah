@@ -180,3 +180,34 @@ export function MomentsBackdrop({ note = 'klik kartunya, nanti videonya main' })
     </div>
   );
 }
+/* ================================================================== */
+/* Tombol bergaya scrapbook                                            */
+/* ================================================================== */
+
+// Tombol utama: "patch" kain ungu dengan jahitan putus-putus
+export const PatchButton = ({ children, className = '', ...props }) => (
+  <button
+    type="button"
+    {...props}
+    className={`${HAND} relative inline-flex -rotate-1 cursor-pointer items-center rounded-[14px] bg-[#6b4375] px-7 py-2.5 text-[1.6rem] leading-none text-[#faf6f0] shadow-[0_10px_18px_-8px_rgba(84,50,92,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:rotate-0 hover:bg-[#764b81] active:scale-95 ${className}`}
+  >
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-[4px] rounded-[10px] border-[1.5px] border-dashed border-[#f7f0e3]/70"
+    />
+    <span className="relative inline-flex items-center gap-2">{children}</span>
+  </button>
+);
+
+// Tombol kedua: sticky note kuning dengan washi tape
+export const NoteButton = ({ children, className = '', tape = TAPES[0], ...props }) => (
+  <button
+    type="button"
+    {...props}
+    className={`${HAND} relative inline-flex rotate-1 cursor-pointer items-center rounded-[3px] bg-[#fbeaa9] px-7 py-2.5 text-[1.6rem] leading-none shadow-[0_10px_16px_-8px_rgba(60,35,80,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:rotate-0 hover:bg-[#fdf0b8] active:scale-95 ${className}`}
+    style={{ color: INK }}
+  >
+    <Washi className="-top-2.5 left-1/2 h-4 w-12 -translate-x-1/2 -rotate-3" color={tape} />
+    <span className="relative inline-flex items-center gap-2">{children}</span>
+  </button>
+);
