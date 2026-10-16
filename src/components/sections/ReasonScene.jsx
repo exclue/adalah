@@ -12,6 +12,19 @@ import { ChevronDown, X } from 'lucide-react';
 import { bouquetLetters, diaryTitle } from '../../data/messages';
 import { playChime, playPop } from '../../utils/sound';
 import { clamp, mix, prefersReduced } from '../story/kit';
+import {
+  HAND,
+  INK as SCRAP_INK,
+  NOISE as SCRAP_NOISE,
+  TAPES,
+  HeartS,
+  StarS,
+  Squiggle,
+  Washi,
+  Daisy as StickerDaisy,
+  ScrapStyles,
+  MomentsBackdrop,
+} from '../story/scrap';
 
 /* ------------------------------------------------------------------ */
 /* Config                                                              */
@@ -26,6 +39,22 @@ const FONT_HREF =
 const INK = '#3a2a22';
 const NOTE_ROT = 11;
 const PIVOT = { x: 200, y: 418 };
+
+/* ---------------- Pengaturan tampilan scrapbook ---------------- */
+const TITLE_TEXT = 'buket buat kamu';
+const STICKY_TEXT = 'geser, terus buka secarik kertasnya ya';
+const HINT_TEXT = 'geser buketnya, terus ketuk secarik kertas yang terselip';
+// Caption per buket, urutannya sama dengan BOUQUETS
+const CAPTIONS = [
+  'mawar merah, buat yang susah diucap',
+  'kuncup yang pelan-pelan mekar',
+  'manis, ringan, dan hangat',
+];
+// Ruang yang disisakan di layar buat judul, caption, dan titik (makin besar = buket makin kecil)
+const SW_RESERVE = 240;
+const SW_MAX = 560; // lebar maksimal satu buket (px)
+const SW_VW = 88; // lebar maksimal buket (% lebar layar), berpengaruh di HP
+/* ---------------------------------------------------------------- */
 
 const mulberry = (a) => () => {
   a |= 0;
@@ -1206,6 +1235,9 @@ function Letter({ letter, originEl, onClose }) {
             style={{ clipPath: torn, background: PAPER_BG }}
           >
             {/* garis margin buku */}
+                        {/* tape + stiker scrapbook */}
+            <Washi className="left-1/2 top-1 z-10 h-6 w-24 -translate-x-1/2 -rotate-2" color={TAPES[0]} />
+            <StickerDaisy className="pointer-events-none absolute left-2 top-2 z-10 h-9 w-9 -rotate-12 drop-shadow md:left-3 md:top-3" />
             <div className="pointer-events-none absolute inset-y-0 left-[38px] w-px bg-[rgba(176,72,84,0.38)] md:left-[54px]" />
 
             <button
@@ -1391,17 +1423,33 @@ export default function ReasonScene() {
     lastFocus.current?.focus?.({ preventScroll: true });
   }, []);
 
-  return (
+    return (
     <section
       id="photos"
-      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-paper-warm py-16 md:py-24"
-      style={{
-        backgroundImage:
-          'radial-gradient(ellipse 60% 55% at 50% 48%, rgba(206,183,221,0.2), transparent 75%)',
-      }}
-    >
+      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-cream py-10 md:py-12"    >
       <style>{CSS}</style>
+      <ScrapStyles />
+      <MomentsBackdrop note={STICKY_TEXT} />
       <SharedDefs />
+
+      {/* Judul: label kertas bertape */}
+      <div className="relative z-10 mb-2 md:mb-4">
+        <div className="relative -rotate-2 bg-[#faf4eb] px-7 pb-4 pt-6 shadow-[0_10px_22px_-8px_rgba(40,20,70,0.45)]">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.3] mix-blend-multiply"
+            style={SCRAP_NOISE}
+          />
+          <Washi className="-top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-3" />
+          <h2
+            className={`${HAND} relative text-[clamp(2.4rem,7vw,3.8rem)] font-bold leading-none`}
+            style={{ color: SCRAP_INK }}
+          >
+            {TITLE_TEXT}
+          </h2>
+          <Squiggle className="relative mx-auto mt-1.5 w-28" />
+          <StarS className="absolute -right-3 -top-3 h-6 w-6 rotate-12" />
+        </div>
+      </div>
 
       <div
         ref={scrollerRef}
@@ -1420,8 +1468,8 @@ export default function ReasonScene() {
         tabIndex={0}
         aria-roledescription="carousel"
         aria-label="Buket bunga"
-        style={{ '--sw': 'min(80vw, 440px, calc((100svh - 150px) * 0.74))' }}
-        className="relative flex w-full cursor-grab select-none snap-x snap-mandatory items-center gap-6 overflow-x-auto px-[calc(50%-var(--sw)/2)] py-6 outline-none [scrollbar-width:none] md:gap-10 [&::-webkit-scrollbar]:hidden"
+        style={{ '--sw': `min(${SW_VW}vw, ${SW_MAX}px, calc((100svh - ${SW_RESERVE}px) * 0.74))` }}
+        className="relative z-10 flex w-full cursor-grab select-none snap-x snap-mandatory items-center gap-6 overflow-x-auto px-[calc(50%-var(--sw)/2)] py-6 outline-none [scrollbar-width:none] md:gap-10 [&::-webkit-scrollbar]:hidden"
       >
         {BOUQUETS.map((b, i) => (
           <div
@@ -1442,12 +1490,26 @@ export default function ReasonScene() {
                 noteRef={(el) => (noteRefs.current[i] = el)}
                 onNote={() => openNote(i)}
               />
+
+              {/* caption tulisan tangan */}
+              <div className="mt-1 flex justify-center">
+                <span
+                  className={`${HAND} relative inline-block rotate-1 bg-[#fffdf8] px-5 pb-1.5 pt-2.5 text-[1.35rem] leading-none shadow-[0_8px_16px_-8px_rgba(60,35,80,0.45)]`}
+                  style={{ color: SCRAP_INK }}
+                >
+                  <Washi
+                    className="-top-2.5 left-1/2 h-5 w-14 -translate-x-1/2 -rotate-3"
+                    color={TAPES[2]}
+                  />
+                  {CAPTIONS[i] ?? ''}
+                </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-2" aria-hidden="true">
+      <div className="relative z-10 mt-3 flex items-center justify-center gap-2" aria-hidden="true">
         {BOUQUETS.map((b, i) => (
           <span
             key={b.id}
@@ -1457,6 +1519,11 @@ export default function ReasonScene() {
           />
         ))}
       </div>
+
+      <p className={`${HAND} relative z-10 mt-3 px-6 text-center text-lg text-ink-soft`}>
+        {HINT_TEXT}{' '}
+        <HeartS className="inline-block h-4 w-4 align-[-2px]" />
+      </p>
 
       {openIdx !== null &&
         createPortal(

@@ -6,20 +6,32 @@ import { playPop } from '../../utils/sound';
 import { prefersReduced, useMediaQuery } from '../story/kit';
 
 /* ================================================================== */
-/* Scrapbook surat: buku yang bisa dibolak-balik                       */
+/* Scrapbook surat versi NOVEL: buku hardcover yang bisa dibolak-balik */
 /*                                                                     */
-/* Desktop : buku terbuka dua halaman (kiri = foto, kanan = surat)     */
+/* Desktop : buku terbuka dua halaman (kiri = foto, kanan = bab/surat) */
 /* HP      : satu halaman penuh, dibalik ke kiri                       */
-/* Kontrol : klik sisi halaman, geser, tombol bawah, panah keyboard    */
+/* Kontrol : klik sisi halaman, geser, tombol bawah, panah keyboard,   */
+/*           dan tab warna di tepi kanan (desktop) buat lompat ke bab  */
+/*                                                                     */
+/* Isi halaman = tipografi novel (serif, drop cap, nomor halaman).     */
+/* Tempelan scrapbook (polaroid, tape, stiker, stabilo, tulisan        */
+/* tangan) tetap ada di atasnya.                                       */
 /*                                                                     */
 /* Ukuran isi halaman pakai satuan cqw (persen lebar halaman), jadi    */
 /* semuanya ikut mengecil/membesar bersama bukunya.                    */
 /* ================================================================== */
 
 const INK = '#3d274f';
+const PURPLE = '#795492';
 const PAPER = '#faf4eb';
 const EASE = 'cubic-bezier(.645,.045,.355,1)';
 const RATIO = 1.42; // tinggi halaman = lebar x RATIO
+const BOOK_TITLE = 'pesan pesan aku buat kamu';
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const toRoman = (k) => ROMAN[k] ?? String(k + 1);
+
+const TAB_COLORS = ['#f4b6c8', '#cdbdf5', '#f6df9c', '#bfe3d0'];
 
 // Teks tulisan tangan di halaman foto. Bebas diganti.
 const POLAROID_CAPTIONS = [
@@ -37,6 +49,8 @@ const SCRAP_NOTES = [
 
 const CSS = `
 .sb-hand{font-family:'Caveat','Segoe Script','Bradley Hand','Comic Sans MS',cursive;}
+.sb-serif{font-family:var(--font-display),'Cormorant Garamond',Georgia,'Times New Roman',serif;}
+@keyframes sb-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 @keyframes sb-shade{0%{opacity:0}50%{opacity:.4}100%{opacity:0}}
 @keyframes sb-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(1.6cqw)}}
 .sb-noise{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
@@ -144,8 +158,32 @@ function BlankPage() {
   return <Page side="l" />;
 }
 
+// Nomor halaman kecil di bawah tengah: "— 12 —"
+function PageNo({ n }) {
+  return (
+    <p
+      className="sb-serif pointer-events-none absolute inset-x-0 bottom-[4.2cqw] text-center text-[4cqw] italic opacity-55"
+      style={{ color: INK }}
+    >
+      &mdash; {n} &mdash;
+    </p>
+  );
+}
+
+// Judul buku kecil di atas halaman (running head)
+function RunningHead() {
+  return (
+    <p
+      className="sb-serif pointer-events-none absolute inset-x-0 top-[3.8cqw] text-center text-[3.5cqw] italic tracking-[0.1em] opacity-50"
+      style={{ color: INK }}
+    >
+      {BOOK_TITLE}
+    </p>
+  );
+}
+
 /* ------------------------------------------------------------------ */
-/* Sampul                                                               */
+/* Sampul hardcover                                                     */
 /* ------------------------------------------------------------------ */
 
 function Cover() {
@@ -165,30 +203,34 @@ function Cover() {
             'repeating-linear-gradient(0deg, rgba(255,255,255,.5) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(40,20,90,.45) 0 1px, transparent 1px 3px)',
         }}
       />
-      <div className="absolute inset-y-0 left-0 w-[9%] bg-gradient-to-r from-[#2a1b45]/45 via-[#2a1b45]/10 to-transparent" />
+
+      {/* punggung buku (spine) */}
+      <div className="absolute inset-y-0 left-0 w-[9%] bg-gradient-to-r from-[#2a1b45]/55 via-[#2a1b45]/15 to-transparent" />
+      <div className="absolute inset-y-0 left-[9%] w-[0.6cqw] bg-[#2a1b45]/30" />
+
       {/* jahitan */}
-      <div className="absolute inset-[6cqw] rounded-[2.4cqw] border-[0.55cqw] border-dashed border-[#f7f0e3]/75" />
+      <div className="absolute inset-[6cqw] left-[13cqw] rounded-[2.4cqw] border-[0.55cqw] border-dashed border-[#f7f0e3]/75" />
 
       {/* label kertas */}
       <div
-        className="absolute left-1/2 top-[40%] w-[72cqw] -translate-x-1/2 -translate-y-1/2 -rotate-2 px-[5cqw] py-[9cqw] text-center shadow-[0_1.4cqw_2.6cqw_-0.8cqw_rgba(40,20,70,0.55)]"
+        className="absolute left-[calc(50%+4cqw)] top-[40%] w-[66cqw] -translate-x-1/2 -translate-y-1/2 -rotate-2 px-[5cqw] py-[9cqw] text-center shadow-[0_1.4cqw_2.6cqw_-0.8cqw_rgba(40,20,70,0.55)]"
         style={{ background: PAPER }}
       >
         <Tape className="-top-[3cqw] left-1/2 -translate-x-1/2 rotate-3" />
-        <p className="sb-hand text-[11.5cqw] font-bold leading-[0.95]" style={{ color: INK }}>
+        <p className="sb-hand text-[10.5cqw] font-bold leading-[0.95]" style={{ color: INK }}>
           Pesan pesan
           <br />
           aku buat kamu
         </p>
-        <Squiggle className="mx-auto mt-[4cqw] w-[32cqw]" color="#e58aa8" />
+        <Squiggle className="mx-auto mt-[4cqw] w-[30cqw]" color="#e58aa8" />
       </div>
 
-      <Daisy className="absolute right-[9cqw] top-[60%] w-[24cqw] rotate-12 drop-shadow-md" />
-      <HeartS className="absolute left-[11cqw] top-[64%] w-[12cqw] -rotate-12" />
-      <StarS className="absolute left-[24cqw] top-[72%] w-[7cqw] rotate-12" />
+      <Daisy className="absolute right-[9cqw] top-[60%] w-[22cqw] rotate-12 drop-shadow-md" />
+      <HeartS className="absolute left-[19cqw] top-[64%] w-[11cqw] -rotate-12" />
+      <StarS className="absolute left-[31cqw] top-[72%] w-[6.5cqw] rotate-12" />
 
       <p
-        className="sb-hand absolute inset-x-0 bottom-[11cqw] text-center text-[5.6cqw]"
+        className="sb-hand absolute inset-x-0 bottom-[11cqw] pl-[8cqw] text-center text-[5.6cqw]"
         style={{ color: PAPER }}
       >
         buka yuk{' '}
@@ -232,7 +274,7 @@ function Polaroid({ src, caption, rot, style, tapeColor }) {
   );
 }
 
-function PhotoPage({ note, index }) {
+function PhotoPage({ note, index, pageNo }) {
   const mirror = index % 2 === 1;
   const pick = (k) => (allImages.length ? allImages[k % allImages.length].url : '');
   const near = (x) => (mirror ? { right: x } : { left: x });
@@ -242,7 +284,9 @@ function PhotoPage({ note, index }) {
 
   return (
     <Page side="l">
-      <div className="absolute top-[6cqw]" style={{ ...near('9cqw'), width: '82cqw' }}>
+      <RunningHead />
+
+      <div className="absolute top-[9cqw]" style={{ ...near('9cqw'), width: '82cqw' }}>
         <p
           className={`sb-hand text-[6.8cqw] font-bold leading-none ${mirror ? 'text-right' : ''}`}
           style={{ color: INK }}
@@ -263,39 +307,46 @@ function PhotoPage({ note, index }) {
         src={pick(index * 2 + 3)}
         caption={caps[0]}
         rot={mirror ? 4 : -4}
-        style={{ ...near('8cqw'), top: '24cqw', width: '58cqw' }}
+        style={{ ...near('8cqw'), top: '25cqw', width: '56cqw' }}
         tapeColor="rgba(244,182,200,0.8)"
       />
       <Polaroid
         src={pick(index * 2 + 4)}
         caption={caps[1]}
         rot={mirror ? -5 : 5}
-        style={{ ...far('7cqw'), top: '66cqw', width: '40cqw' }}
+        style={{ ...far('7cqw'), top: '62cqw', width: '38cqw' }}
         tapeColor="rgba(205,189,245,0.85)"
       />
 
-      <Daisy className="absolute w-[19cqw] -rotate-6 drop-shadow" style={{ ...near('10cqw'), top: '108cqw' }} />
-      <HeartS className="absolute w-[10cqw] rotate-12" style={{ ...near('33cqw'), top: '117cqw' }} />
-      <StarS className="absolute w-[6cqw] -rotate-12" style={{ ...near('29cqw'), top: '106cqw' }} />
+      <Daisy className="absolute w-[19cqw] -rotate-6 drop-shadow" style={{ ...near('10cqw'), top: '104cqw' }} />
+      <HeartS className="absolute w-[10cqw] rotate-12" style={{ ...near('33cqw'), top: '113cqw' }} />
+      <StarS className="absolute w-[6cqw] -rotate-12" style={{ ...near('29cqw'), top: '102cqw' }} />
 
       <p
-        className="sb-hand absolute w-[44cqw] -rotate-2 text-right text-[5cqw] leading-tight"
-        style={{ ...far('8cqw'), top: '126cqw', color: INK, textAlign: mirror ? 'left' : 'right' }}
+        className="sb-hand absolute w-[44cqw] -rotate-2 text-[5cqw] leading-tight"
+        style={{ ...far('8cqw'), top: '118cqw', color: INK, textAlign: mirror ? 'left' : 'right' }}
       >
         {scrap}
       </p>
+
+      <PageNo n={pageNo} />
     </Page>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* Halaman surat (kanan)                                                */
+/* Halaman bab / surat (kanan)                                          */
 /* ------------------------------------------------------------------ */
 
-function LetterPage({ note, index, total, side = 'r' }) {
+function LetterPage({ note, index, total, pageNo, side = 'r' }) {
+  const text = note.content || '';
+  const first = text.charAt(0);
+  const rest = text.slice(1);
+
   return (
     <Page side={side}>
-      <div className="absolute inset-0 flex flex-col px-[9cqw] pb-[7cqw] pt-[7cqw]">
+      <div className="absolute inset-0 flex flex-col px-[9cqw] pb-[12cqw] pt-[7cqw]">
+        {/* baris atas: stiker kategori + penanda bab */}
         <div className="flex items-start justify-between">
           <span
             className="sb-hand -rotate-2 border border-dashed border-[#d9b24c]/70 px-[3cqw] py-[0.8cqw] text-[4.4cqw] leading-tight"
@@ -303,20 +354,28 @@ function LetterPage({ note, index, total, side = 'r' }) {
           >
             {note.category}
           </span>
-          <span className="sb-hand text-[4.4cqw] opacity-60" style={{ color: INK }}>
+          <span className="sb-serif text-[3.8cqw] italic opacity-60" style={{ color: INK }}>
             {index + 1} dari {total}
           </span>
         </div>
 
+        {/* pembuka bab */}
+        <p
+          className="sb-serif mt-[6cqw] text-center text-[4.2cqw] font-semibold italic tracking-[0.2em]"
+          style={{ color: PURPLE }}
+        >
+          bab {toRoman(index)}
+        </p>
         <h3
-          className="sb-hand mt-[5.5cqw] text-[8.2cqw] font-bold leading-[1.02]"
+          className="sb-serif mt-[1.6cqw] text-center text-[6.8cqw] font-semibold leading-[1.08]"
           style={{ color: INK }}
         >
           {note.title}
         </h3>
-        <Squiggle className="mt-[2cqw] w-[34cqw]" color="#e58aa8" />
+        <Squiggle className="mx-auto mt-[2cqw] w-[30cqw]" color="#e58aa8" />
 
-        <p className="sb-hand mt-[4.5cqw] text-[5.4cqw] leading-[1.3]" style={{ color: INK }}>
+        {/* kalimat inti, distabilo seperti coretan tangan */}
+        <p className="sb-hand mt-[4cqw] -rotate-1 text-center text-[5.4cqw] leading-[1.25]" style={{ color: INK }}>
           <span
             className="px-[1cqw]"
             style={{
@@ -329,21 +388,34 @@ function LetterPage({ note, index, total, side = 'r' }) {
           </span>
         </p>
 
+        {/* isi bab: serif + drop cap */}
         <p
-          className="sb-hand mt-[4.5cqw] text-[4.9cqw] leading-[7cqw]"
-          style={{
-            color: INK,
-            backgroundImage:
-              'repeating-linear-gradient(to bottom, transparent 0, transparent calc(7cqw - 1px), rgba(120,100,170,0.28) calc(7cqw - 1px), rgba(120,100,170,0.28) 7cqw)',
-          }}
+          lang="id"
+          className="sb-serif mt-[4.5cqw] text-justify text-[4.9cqw] font-medium leading-[6.7cqw] [hyphens:auto]"
+          style={{ color: INK }}
         >
-          {note.content}
+          <span
+            aria-hidden="true"
+            className="float-left font-semibold"
+            style={{
+              fontSize: '14cqw',
+              lineHeight: 0.8,
+              paddingRight: '1.6cqw',
+              paddingTop: '0.9cqw',
+              color: PURPLE,
+            }}
+          >
+            {first}
+          </span>
+          <span className="sr-only">{first}</span>
+          {rest}
         </p>
 
+        {/* tanda tangan + stiker */}
         <div className="mt-auto flex items-end justify-between gap-[4cqw]">
-          <Daisy className="w-[15cqw] flex-none rotate-6 drop-shadow" />
+          <Daisy className="w-[12cqw] flex-none rotate-6 drop-shadow" />
           <p
-            className="sb-hand -rotate-2 text-right text-[5.6cqw] leading-tight"
+            className="sb-hand -rotate-2 text-right text-[5.4cqw] leading-tight"
             style={{ color: INK }}
           >
             {note.authorTag}{' '}
@@ -351,6 +423,8 @@ function LetterPage({ note, index, total, side = 'r' }) {
           </p>
         </div>
       </div>
+
+      <PageNo n={pageNo} />
     </Page>
   );
 }
@@ -362,10 +436,11 @@ function LetterPage({ note, index, total, side = 'r' }) {
 const TORN_CLIP =
   'polygon(0 3%,6% 0,14% 3%,24% 0,36% 2%,48% 0,60% 3%,72% 0,84% 2%,94% 0,100% 3%,100% 97%,92% 100%,80% 97%,68% 100%,54% 98%,42% 100%,30% 97%,18% 100%,8% 98%,0 100%)';
 
-function ClosingPage({ side = 'l' }) {
+function ClosingPage({ side = 'l', pageNo }) {
   const quote = shortQuotes?.[0];
   return (
     <Page side={side}>
+      <RunningHead />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-[7cqw] px-[11cqw] text-center">
         <HeartS className="w-[22cqw] -rotate-6 drop-shadow" />
         <p className="sb-hand text-[11cqw] font-bold leading-none" style={{ color: INK }}>
@@ -385,8 +460,9 @@ function ClosingPage({ side = 'l' }) {
           </div>
         )}
       </div>
-      <StarS className="absolute left-[12cqw] top-[10cqw] w-[8cqw] rotate-12" />
-      <StarS className="absolute bottom-[12cqw] right-[12cqw] w-[6cqw] -rotate-12" fill="#f4b6c8" />
+      <StarS className="absolute left-[12cqw] top-[14cqw] w-[8cqw] rotate-12" />
+      <StarS className="absolute bottom-[14cqw] right-[12cqw] w-[6cqw] -rotate-12" fill="#f4b6c8" />
+      {pageNo ? <PageNo n={pageNo} /> : null}
     </Page>
   );
 }
@@ -430,32 +506,220 @@ function Sheet({ i, total, flipped, turning, single, dur, front, back }) {
   );
 }
 
-function Boards({ single, f, maxF }) {
+// Garis-garis tepi tumpukan kertas
+const EDGE_V = 'repeating-linear-gradient(90deg,#f3eadb 0 1px,#d8ccb6 1px 2.2px)';
+const EDGE_H = 'repeating-linear-gradient(0deg,#f3eadb 0 1px,#d8ccb6 1px 2.2px)';
+
+// Papan hardcover + tebal tumpukan halaman (kiri tebal kalau sudah banyak
+// halaman terbalik, kanan tebal kalau masih banyak yang belum dibaca)
+function Boards({ single, f, maxF, dur }) {
+  const t = maxF ? f / maxF : 0;
   const base = {
     background: '#6a5078',
     transition: 'opacity 600ms ease',
     transform: 'translateZ(-3px)',
   };
+  const stack = { transform: 'translateZ(-2px)', transition: `width ${dur}ms ${EASE}, left ${dur}ms ${EASE}, opacity 600ms ease` };
+
   if (single) {
-    return <div className="absolute rounded-[10px]" style={{ ...base, inset: '-1.4% -2.4% -1.4% -2.4%' }} />;
+    return (
+      <>
+        <div className="absolute rounded-[10px]" style={{ ...base, inset: '-1.4% -2.4% -1.4% -2.4%' }} />
+        <div
+          className="absolute"
+          style={{ ...stack, left: 0, width: '101.6%', top: '0.5%', bottom: '-0.5%', background: EDGE_V, borderRadius: '0 3px 3px 0' }}
+        />
+        <div
+          className="absolute"
+          style={{ ...stack, left: '0.4%', right: '0.4%', top: '100%', height: '1%', background: EDGE_H, borderRadius: '0 0 3px 3px' }}
+        />
+      </>
+    );
   }
+
+  const leftW = 0.3 + 1.1 * t;
+  const rightW = 0.3 + 1.1 * (1 - t);
+  const leftOn = f === 0 ? 0 : 1;
+  const rightOn = f === maxF ? 0 : 1;
+
   return (
     <>
       <div
         className="absolute rounded-l-[10px]"
-        style={{ ...base, left: '-1.4%', top: '-1.6%', bottom: '-1.6%', width: '51.4%', opacity: f === 0 ? 0 : 1 }}
+        style={{ ...base, left: '-1.4%', top: '-1.6%', bottom: '-1.6%', width: '51.4%', opacity: leftOn }}
       />
       <div
         className="absolute rounded-r-[10px]"
-        style={{ ...base, left: '50%', top: '-1.6%', bottom: '-1.6%', width: '51.4%', opacity: f === maxF ? 0 : 1 }}
+        style={{ ...base, left: '50%', top: '-1.6%', bottom: '-1.6%', width: '51.4%', opacity: rightOn }}
+      />
+
+      {/* tebal tumpukan halaman kiri */}
+      <div
+        className="absolute"
+        style={{
+          ...stack,
+          left: `${-leftW}%`,
+          width: `${50 + leftW}%`,
+          top: '0.5%',
+          bottom: '-0.5%',
+          background: EDGE_V,
+          borderRadius: '3px 0 0 3px',
+          opacity: leftOn,
+        }}
+      />
+      {/* tebal tumpukan halaman kanan */}
+      <div
+        className="absolute"
+        style={{
+          ...stack,
+          left: '50%',
+          width: `${50 + rightW}%`,
+          top: '0.5%',
+          bottom: '-0.5%',
+          background: EDGE_V,
+          borderRadius: '0 3px 3px 0',
+          opacity: rightOn,
+        }}
+      />
+      {/* tepi bawah tumpukan */}
+      <div
+        className="absolute"
+        style={{ ...stack, left: '0.4%', width: '49.6%', top: '100%', height: '0.9%', background: EDGE_H, opacity: leftOn }}
+      />
+      <div
+        className="absolute"
+        style={{ ...stack, left: '50%', width: '49.6%', top: '100%', height: '0.9%', background: EDGE_H, opacity: rightOn }}
       />
     </>
+  );
+}
+
+// Pita pembatas pink yang menjuntai dari bawah buku
+function Ribbon({ left, dur }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute"
+      style={{
+        left,
+        top: '96%',
+        width: 'calc(var(--pw) * 0.055)',
+        height: 'calc(var(--pw) * 0.13)',
+        background: 'linear-gradient(90deg,#d9708f,#f09ab4 50%,#d9708f)',
+        clipPath: 'polygon(0 0,100% 0,100% 100%,50% 88%,0 100%)',
+        transform: 'translateZ(-1px)',
+        transition: `left ${dur}ms ${EASE}`,
+      }}
+    />
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Latar meja scrapbook                                                 */
+/* ------------------------------------------------------------------ */
+
+const float = (sec, delay = 0) => ({ animation: `sb-float ${sec}s ease-in-out ${delay}s infinite` });
+
+const Leaf = ({ className = '', style }) => (
+  <svg viewBox="0 0 40 80" className={className} style={style} aria-hidden="true">
+    <path d="M20 78C4 56 4 24 20 2c16 22 16 54 0 76z" fill="#c5d6b6" stroke="#9db38d" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M20 8v66" stroke="#9db38d" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
+const Washi = ({ className = '', color = 'rgba(244,182,200,0.78)' }) => (
+  <span
+    aria-hidden="true"
+    className={`absolute block ${className}`}
+    style={{
+      background: `repeating-linear-gradient(45deg, rgba(255,255,255,0.35) 0 6px, transparent 6px 14px), ${color}`,
+      clipPath: TAPE_CLIP,
+    }}
+  />
+);
+
+function DeskBackdrop() {
+  const fade = 'radial-gradient(ellipse 62% 58% at 50% 50%, transparent 40%, #000 90%)';
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* cahaya lampu meja */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_48%,rgba(248,236,214,0.95),transparent_72%)]" />
+
+      {/* semburat warna lembut */}
+      <div className="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-purple-300/30 blur-3xl" />
+      <div className="absolute -bottom-28 -right-20 h-96 w-96 rounded-full bg-[#f4b6c8]/30 blur-3xl" />
+
+      {/* alas titik-titik ala bullet journal, memudar ke tengah */}
+      <div
+        className="absolute inset-0 opacity-60"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(121,84,146,.22) 1.2px, transparent 1.4px)',
+          backgroundSize: '26px 26px',
+          WebkitMaskImage: fade,
+          maskImage: fade,
+        }}
+      />
+
+      {/* serat kertas + vinyet tepi */}
+      <div className="sb-noise absolute inset-0 opacity-[0.22] mix-blend-multiply" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(98,66,120,0.14)_100%)]" />
+
+      {/* bunga kering kiri atas */}
+      <div className="sb-anim absolute left-[3%] top-[6%]" style={float(8)}>
+        <Leaf className="absolute left-2 top-10 h-24 w-12 -rotate-[28deg]" />
+        <Leaf className="absolute left-20 top-8 h-20 w-10 rotate-[32deg]" />
+        <Daisy className="relative h-24 w-24 -rotate-12 drop-shadow-md md:h-28 md:w-28" />
+        <Daisy className="absolute left-16 top-20 hidden h-14 w-14 rotate-[24deg] drop-shadow md:block" />
+      </div>
+
+      {/* ranting kanan bawah */}
+      <div className="sb-anim absolute bottom-[5%] right-[3%]" style={float(9, 1.2)}>
+        <Leaf className="absolute -left-6 top-6 h-20 w-10 -rotate-[38deg]" />
+        <Leaf className="absolute left-12 top-2 h-16 w-8 rotate-[24deg]" />
+        <Daisy className="relative h-20 w-20 rotate-[10deg] drop-shadow-md md:h-24 md:w-24" />
+      </div>
+
+      {/* washi tape di sudut */}
+      <Washi className="-right-10 top-8 hidden h-8 w-44 rotate-[34deg] md:block" />
+      <Washi className="-left-12 bottom-14 hidden h-8 w-44 -rotate-[32deg] md:block" color="rgba(205,189,245,0.8)" />
+
+      {/* sticky note kanan atas */}
+      <div className="sb-anim absolute right-[6%] top-[9%] hidden w-44 rotate-[4deg] lg:block" style={float(7, 0.6)}>
+        <div className="bg-[#fbeaa9] px-4 pb-5 pt-6 shadow-[0_8px_16px_-6px_rgba(60,35,80,0.4)]">
+          <p className="sb-hand text-xl leading-tight" style={{ color: INK }}>
+            psst, bacanya pelan-pelan ya
+          </p>
+        </div>
+        <Washi className="-top-3 left-1/2 h-6 w-20 -translate-x-1/2 -rotate-3" color="rgba(244,182,200,0.85)" />
+      </div>
+
+      {/* secarik kertas sobek kiri bawah */}
+      <div className="absolute bottom-[8%] left-[5%] hidden w-52 -rotate-3 drop-shadow-[0_6px_10px_rgba(60,35,80,0.25)] lg:block">
+        <div className="bg-white/80 px-5 py-6" style={{ clipPath: TORN_CLIP }}>
+          <p className="sb-hand text-xl leading-snug" style={{ color: INK }}>
+            untukmu, yang lagi baca ini{' '}
+            <HeartS className="inline-block h-4 w-4 align-[-2px]" />
+          </p>
+        </div>
+        <Washi className="-top-3 left-1/2 h-6 w-20 -translate-x-1/2 rotate-2" color="rgba(246,223,156,0.9)" />
+      </div>
+
+      {/* bintang & hati kecil berserakan */}
+      <StarS className="sb-anim absolute left-[22%] top-[14%] hidden h-6 w-6 rotate-12 md:block" style={float(6)} />
+      <StarS className="sb-anim absolute right-[24%] top-[7%] h-5 w-5 -rotate-12" style={float(7, 1)} fill="#f4b6c8" />
+      <HeartS className="sb-anim absolute left-[12%] top-[52%] hidden h-6 w-6 -rotate-12 md:block" style={float(8, 0.4)} />
+      <HeartS className="sb-anim absolute bottom-[18%] right-[19%] hidden h-7 w-7 rotate-12 md:block" style={float(7.5, 2)} />
+      <StarS className="sb-anim absolute bottom-[9%] left-[30%] h-5 w-5 rotate-6" style={float(6.5, 1.6)} />
+      <StarS className="sb-anim absolute right-[9%] top-[48%] hidden h-5 w-5 -rotate-6 md:block" style={float(9, 0.8)} fill="#cdbdf5" />
+    </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
 /* Scene                                                                */
 /* ------------------------------------------------------------------ */
+
+const stop = (e) => e.stopPropagation();
 
 export default function ScrapbookScene() {
   const sectionRef = useRef(null);
@@ -472,22 +736,31 @@ export default function ScrapbookScene() {
 
   const sheets = useMemo(() => {
     if (!n) return [];
+    const endNo = 2 * n + 2;
     if (isDesktop) {
-      const list = [{ front: <Cover />, back: <PhotoPage note={loveNotes[0]} index={0} /> }];
+      // nomor halaman: foto = genap (kiri), surat = ganjil (kanan)
+      const list = [
+        { front: <Cover />, back: <PhotoPage note={loveNotes[0]} index={0} pageNo={2} /> },
+      ];
       for (let i = 0; i < n; i++) {
         list.push({
-          front: <LetterPage note={loveNotes[i]} index={i} total={n} side="r" />,
-          back: i < n - 1 ? <PhotoPage note={loveNotes[i + 1]} index={i + 1} /> : <ClosingPage side="l" />,
+          front: <LetterPage note={loveNotes[i]} index={i} total={n} pageNo={2 * i + 3} side="r" />,
+          back:
+            i < n - 1 ? (
+              <PhotoPage note={loveNotes[i + 1]} index={i + 1} pageNo={2 * (i + 1) + 2} />
+            ) : (
+              <ClosingPage side="l" pageNo={endNo} />
+            ),
         });
       }
       return list;
     }
     const pages = [<Cover key="cover" />];
     loveNotes.forEach((note, i) => {
-      pages.push(<PhotoPage key={`p${i}`} note={note} index={i} />);
-      pages.push(<LetterPage key={`l${i}`} note={note} index={i} total={n} side="r" />);
+      pages.push(<PhotoPage key={`p${i}`} note={note} index={i} pageNo={2 * i + 2} />);
+      pages.push(<LetterPage key={`l${i}`} note={note} index={i} total={n} pageNo={2 * i + 3} side="r" />);
     });
-    pages.push(<ClosingPage key="end" side="r" />);
+    pages.push(<ClosingPage key="end" side="r" pageNo={endNo} />);
     return pages.map((page) => ({ front: page, back: <BlankPage /> }));
   }, [isDesktop, n]);
 
@@ -506,6 +779,19 @@ export default function ScrapbookScene() {
       timer.current = setTimeout(() => setTurning(-1), dur + 80);
     },
     [maxF, dur]
+  );
+
+  // Lompat langsung ke halaman tertentu (dipakai tab bab)
+  const jump = useCallback(
+    (target) => {
+      const next = Math.min(Math.max(target, 0), maxF);
+      if (next === fRef.current) return;
+      fRef.current = next;
+      setF(next);
+      setTurning(-1);
+      playPop();
+    },
+    [maxF]
   );
 
   // Ganti ukuran layar (HP <-> desktop): kembali ke sampul
@@ -583,11 +869,14 @@ export default function ScrapbookScene() {
 
   let label = 'sampul';
   if (f === maxF) label = 'selesai';
-  else if (f > 0) label = isDesktop ? `surat ${f} / ${n}` : `halaman ${f} / ${n * 2}`;
+  else if (f > 0) label = isDesktop ? `bab ${toRoman(f - 1)} / ${toRoman(n - 1)}` : `halaman ${f} / ${n * 2}`;
 
   const pw = isDesktop
     ? `min(44vw, calc(72svh / ${RATIO}), 460px)`
     : `min(86vw, calc(66svh / ${RATIO}), 340px)`;
+
+  const ribbonLeft = isDesktop ? (f === maxF ? '41%' : '57%') : '78%';
+  const tabsVisible = isDesktop && f > 0 && f < maxF;
 
   return (
     <section
@@ -597,16 +886,12 @@ export default function ScrapbookScene() {
     >
       <style>{CSS}</style>
 
-      {/* cahaya lampu meja di belakang buku */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,rgba(235,218,195,0.65),transparent_70%)]"
-      />
+      <DeskBackdrop />
 
       <div
         role="group"
-        aria-roledescription="buku scrapbook"
-        aria-label="Buku scrapbook berisi surat. Gunakan panah kiri dan kanan untuk membalik halaman."
+        aria-roledescription="buku novel scrapbook"
+        aria-label="Buku novel scrapbook berisi surat. Gunakan panah kiri dan kanan untuk membalik halaman."
         tabIndex={0}
         onKeyDown={onKeyDown}
         onPointerDown={onPointerDown}
@@ -633,7 +918,8 @@ export default function ScrapbookScene() {
             aria-hidden="true"
             className="absolute inset-x-[4%] -bottom-[3.5%] h-[6%] rounded-[50%] bg-[#362444]/20 blur-xl"
           />
-          <Boards single={!isDesktop} f={f} maxF={maxF} />
+          <Boards single={!isDesktop} f={f} maxF={maxF} dur={dur} />
+          <Ribbon left={ribbonLeft} dur={dur} />
           {sheets.map((s, i) => (
             <Sheet
               key={i}
@@ -647,10 +933,46 @@ export default function ScrapbookScene() {
               back={s.back}
             />
           ))}
+
+          {/* tab pembatas di tepi kanan: lompat ke bab (desktop) */}
+          {isDesktop &&
+            loveNotes.map((note, i) => {
+              const active = f === i + 1;
+              return (
+                <button
+                  key={note.id ?? i}
+                  type="button"
+                  aria-label={`Lompat ke bab ${toRoman(i)}`}
+                  tabIndex={tabsVisible ? 0 : -1}
+                  onPointerDown={stop}
+                  onPointerUp={stop}
+                  onClick={() => {
+                    interacted.current = true;
+                    jump(i + 1);
+                  }}
+                  className="sb-hand absolute flex cursor-pointer items-center justify-center rounded-r-md font-bold shadow-sm"
+                  style={{
+                    left: '101%',
+                    top: `${12 + i * 16}%`,
+                    width: `calc(var(--pw) * ${active ? 0.1 : 0.075})`,
+                    height: 'calc(var(--pw) * 0.13)',
+                    fontSize: 'calc(var(--pw) * 0.05)',
+                    background: TAB_COLORS[i % TAB_COLORS.length],
+                    color: INK,
+                    opacity: tabsVisible ? 1 : 0,
+                    pointerEvents: tabsVisible ? 'auto' : 'none',
+                    zIndex: 60,
+                    transition: 'width 300ms ease, opacity 400ms ease',
+                  }}
+                >
+                  {i + 1}
+                </button>
+              );
+            })}
         </div>
       </div>
 
-      <div className="relative z-10 mt-10 flex items-center gap-5 text-ink-soft">
+      <div className="relative z-10 mt-14 flex items-center gap-5 text-ink-soft">
         <button
           type="button"
           aria-label="Halaman sebelumnya"

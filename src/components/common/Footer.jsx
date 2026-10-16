@@ -39,7 +39,6 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 sm:flex-row">
         <div className="flex items-center gap-2 text-sm text-ink-soft">
           <Heart className="h-4 w-4 text-purple-600" />
-          <span>Dedicated with love for Vanvan</span>
         </div>
 
         <div className="flex items-center gap-6">

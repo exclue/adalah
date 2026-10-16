@@ -11,7 +11,7 @@
 
 export const NOTES = [
   {
-    id: 'letter-1',
+    id: 'letter-1', 
     type: 'letter',
     title: 'soal hari yang berat',
     date: 'Oktober 2026',
@@ -26,8 +26,8 @@ export const NOTES = [
     id: 'fav-makanan',
     type: 'favorite',
     category: 'Makanan',
-    title: 'yang selalu bikin dia senyum',
-    note: 'Daftar makanan yang kalau ditawarin, dia nggak pernah nolak.',
+    title: 'ADA BANYAKK NIII',
+    note: 'WUISSHH EMAANGG TUKANG JAJAANNNN',
     items: [
       { name: 'Kebab', desc: 'SETUJUUUKK INI EMANG ENAK', image: '' },
       { name: 'Nasi Goreng (bikinan mama)', desc: 'Gaada fotonyaaa jadi ambil google aja EHEHE maaf ya.', image: '' },

@@ -31,6 +31,18 @@ import {
   prefersReduced,
   goTo,
 } from '../story/kit';
+import {
+  INK,
+  HAND,
+  NOISE,
+  TAPES,
+  HeartS,
+  StarS,
+  Squiggle,
+  Washi,
+  ScrapStyles,
+  MomentsBackdrop,
+} from '../story/scrap';
 
 // Mask bawaan DriftWall itu gradient, dimatikan biar wall full sampai ujung.
 const NO_MASK = { WebkitMaskImage: 'none', maskImage: 'none' };
@@ -157,136 +169,176 @@ function HeroScene({ ready, onExploreFavorites }) {
     []
   );
 
-  return (
-    <section
-      id="hero"
-      ref={sceneRef}
-      className="relative h-[170svh] bg-paper motion-reduce:h-svh"
-    >
-      <div className="sticky top-0 h-svh min-h-[600px] overflow-hidden">
-        {/* Foto latar: MorphSlider (bisa digeser) */}
-        <div
-          data-bg
-          className="absolute inset-x-0 top-0 h-[52svh] will-change-transform md:inset-0 md:h-auto"
-        >
-          <MorphSlider
-            items={morphSliderItems}
-            transition="melt"
-            intensity={0.4}
-            aberration={0.2}
-            drift={0.3}
-            autoplay
-            autoplayDelay={5}
-            duration={1.2}
-            radius={0}
-            overlayColor="#FAF7F2"
-            showCaptions={false}
-            showControls={false}
-            showIndicators={false}
-            focusY={0.3}
-          />
-        </div>
-
-        {/* Gradasi lembut desktop */}
-        <div
-          data-veil
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-full bg-gradient-to-r from-paper/95 via-paper/60 to-transparent md:block md:w-[62%]"
+return (
+  <section
+    id="hero"
+    ref={sceneRef}
+    className="relative h-[170svh] bg-paper motion-reduce:h-svh"
+  >
+    <div className="sticky top-0 h-svh min-h-[600px] overflow-hidden">
+      {/* Foto latar full layar (HP & desktop): MorphSlider */}
+      <div data-bg className="absolute inset-0 will-change-transform">
+        <MorphSlider
+          items={morphSliderItems}
+          transition="melt"
+          intensity={0.4}
+          aberration={0.2}
+          drift={0.3}
+          autoplay
+          autoplayDelay={5}
+          duration={1.2}
+          radius={0}
+          overlayColor="#FAF7F2"
+          showCaptions={false}
+          showControls={false}
+          showIndicators={false}
+          focusY={0.3}
         />
-        {/* Gradasi HP: memudar di dalam bagian bawah foto */}
-        <div className="pointer-events-none absolute inset-x-0 top-[38svh] z-10 h-[14svh] bg-gradient-to-t from-paper to-transparent md:hidden" />
+      </div>
 
-        {/* Teks: bawah di HP (mulai di bawah foto), tengah di desktop */}
-        <div
-          data-copy
-          className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-6 pb-14 pt-[52svh] md:justify-center md:px-12 md:pb-0 md:pt-24 lg:px-16"
-        >
-          <div className="max-w-5xl">
-            <h1
-              className={`${DISPLAY} mb-5 text-[clamp(2.7rem,12.5vw,4.5rem)] leading-[0.92] text-ink md:mb-7 md:text-[clamp(3.4rem,14vw,10.5rem)]`}
-            >
-              <Line text="HALAAWWW" />
-              <Line text="NIAAA" />
-            </h1>
+      {/* Gradasi desktop (kiri) */}
+      <div
+        data-veil
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-full bg-gradient-to-r from-paper/95 via-paper/60 to-transparent md:block md:w-[62%]"
+      />
+      {/* Gradasi HP (bawah), biar teks kebaca di atas foto full */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[62svh] bg-gradient-to-t from-paper via-paper/85 to-transparent md:hidden" />
 
-            <p
-              data-fade
-              className="mb-6 max-w-md text-sm leading-relaxed text-ink-soft md:mb-9 md:text-base"
-            >
-              MAAAFF YAAHH LAMAAA EHEHHE AKUU NGEBUAT INII DARI HARI SENINN.
-              DISINII TENTANGG KAMUU SEMUAA SEMOGA KAMU SUKAA YAA.
-              kamuu scroll scroll ajaaa
-            </p>
+      {/* Teks: bawah di HP, tengah di desktop */}
+      <div
+        data-copy
+        className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-6 pb-14 pt-24 md:justify-center md:px-12 md:pb-0 lg:px-16"
+      >
+        <div className="max-w-5xl">
+          <h1
+            className={`${DISPLAY} mb-4 text-[clamp(2.7rem,12.5vw,4.5rem)] leading-[0.92] text-ink md:mb-7 md:text-[clamp(3.4rem,14vw,10.5rem)]`}
+          >
+            <Line text="HALAAWWW" />
+            <Line text="NIAAA" />
+          </h1>
 
-            <div data-fade className="pointer-events-auto flex flex-wrap items-center gap-3">
-              <Magnetic>
-                <button
-                  onClick={() => goTo('gallery')}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#855792]/40 bg-gradient-to-b from-[#6b4375] to-[#54325c] px-6 py-3 text-sm font-medium text-[#faf6f0] shadow-[0_4px_16px_-2px_rgba(84,50,92,0.35),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:from-[#764b81] hover:to-[#5e3867] hover:shadow-[0_8px_24px_-4px_rgba(84,50,92,0.45)] active:scale-95"
-                >
-                  <span>Lanjutt</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </Magnetic>
-              <Magnetic>
-                <button
-                  onClick={() => {
-                    playPop();
-                    onExploreFavorites?.();
-                  }}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-[#fffdf9] px-6 py-3 text-sm font-medium text-ink shadow-xs transition-all hover:bg-paper-2 hover:border-purple-200 active:scale-95"
-                >
-                  <Lightbulb className="h-4 w-4 text-purple-600" />
-                  <span>Penceett</span>
-                </button>
-              </Magnetic>
-            </div>
+          <p
+            data-fade
+            className="mb-6 max-w-md text-sm leading-relaxed text-ink-soft md:mb-9 md:text-base"
+          >
+            MAAAFF YAAHH LAMAAA EHEHHE AKUU NGEBUAT INII DARI HARI SENINN.
+            DISINII TENTANGG KAMUU SEMUAA SEMOGA KAMU SUKAA YAA.
+            kamuu scroll scroll ajaaa
+          </p>
+
+          <div data-fade className="pointer-events-auto flex flex-wrap items-center gap-3">
+            <Magnetic>
+              <button
+                onClick={() => goTo('gallery')}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#855792]/40 bg-gradient-to-b from-[#6b4375] to-[#54325c] px-6 py-3 text-sm font-medium text-[#faf6f0] shadow-[0_4px_16px_-2px_rgba(84,50,92,0.35),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:from-[#764b81] hover:to-[#5e3867] hover:shadow-[0_8px_24px_-4px_rgba(84,50,92,0.45)] active:scale-95"
+              >
+                <span>Lanjutt</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <button
+                onClick={() => {
+                  playPop();
+                  onExploreFavorites?.();
+                }}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-[#fffdf9] px-6 py-3 text-sm font-medium text-ink shadow-xs transition-all hover:bg-paper-2 hover:border-purple-200 active:scale-95"
+              >
+                <Lightbulb className="h-4 w-4 text-purple-600" />
+                <span>Penceett</span>
+              </button>
+            </Magnetic>
           </div>
-        </div>
-
-        {/* Tumpukan polaroid (layar lebar) */}
-        <div
-          data-aside
-          className="pointer-events-none absolute right-5 top-24 z-10 md:right-10 xl:right-16 xl:top-1/2 xl:-translate-y-1/2"
-        >
-          <div data-fade className="relative xl:h-[400px] xl:w-[300px]">
-            {allImages.length > 0 &&
-              HERO_POLAROIDS.map((p) => {
-                const img = allImages[p.pick % allImages.length];
-                return (
-                  <div key={p.cap} data-float className={`absolute hidden xl:block ${p.cls}`}>
-                    <div
-                      className="rounded-[6px] border border-line/60 bg-[#fffdf9] p-2 pb-1.5 shadow-[0_18px_36px_-12px_rgba(60,40,75,0.22)]"
-                      style={{ transform: `rotate(${p.rot}deg)` }}
-                    >
-                      <img
-                        src={img.url}
-                        alt=""
-                        draggable={false}
-                        className="aspect-[4/5] w-full rounded-[2px] object-cover"
-                      />
-                      <span className="block pb-1 pt-2 text-center text-[11px] font-medium text-ink/70">
-                        {p.cap}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
-
-        {/* Petunjuk scroll */}
-        <div
-          data-cue
-          className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 text-xs text-ink/60 md:bottom-6 md:left-auto md:right-8 md:translate-x-0"
-        >
-          <span>scroll</span>
-          <span data-bob>
-            <ChevronDown className="h-4 w-4" />
-          </span>
         </div>
       </div>
-    </section>
-  );
+
+      {/* Tumpukan polaroid (layar lebar) */}
+      <div
+        data-aside
+        className="pointer-events-none absolute right-5 top-24 z-10 md:right-10 xl:right-16 xl:top-1/2 xl:-translate-y-1/2"
+      >
+        <div data-fade className="relative xl:h-[400px] xl:w-[300px]">
+          {allImages.length > 0 &&
+            HERO_POLAROIDS.map((p) => {
+              const img = allImages[p.pick % allImages.length];
+              return (
+                <div key={p.cap} data-float className={`absolute hidden xl:block ${p.cls}`}>
+                  <div
+                    className="rounded-[6px] border border-line/60 bg-[#fffdf9] p-2 pb-1.5 shadow-[0_18px_36px_-12px_rgba(60,40,75,0.22)]"
+                    style={{ transform: `rotate(${p.rot}deg)` }}
+                  >
+                    <img
+                      src={img.url}
+                      alt=""
+                      draggable={false}
+                      className="aspect-[4/5] w-full rounded-[2px] object-cover"
+                    />
+                    <span className="block pb-1 pt-2 text-center text-[11px] font-medium text-ink/70">
+                      {p.cap}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </div>
+
+      {/* Petunjuk scroll */}
+      <div
+        data-cue
+        className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 text-xs text-ink/60 md:bottom-6 md:left-auto md:right-8 md:translate-x-0"
+      >
+        <span>scroll</span>
+        <span data-bob>
+          <ChevronDown className="h-4 w-4" />
+        </span>
+      </div>
+    </div>
+  </section>
+);
+}
+
+/* ------------------------------------------------------------------ */
+/* Bentuk jendela galeri: daun semanggi 4 (empat hati, ujung di tengah) */
+/* ------------------------------------------------------------------ */
+
+// Satu daun = hati dengan ujung di (0,0), kurva bezier dalam satuan r
+const CLOVER_SEG = [
+  [-0.15, -0.2, -0.55, -0.45, -0.55, -0.72],
+  [-0.55, -0.95, -0.3, -1.02, -0.15, -0.95],
+  [-0.07, -0.91, -0.02, -0.85, 0, -0.78],
+  [0.02, -0.85, 0.07, -0.91, 0.15, -0.95],
+  [0.3, -1.02, 0.55, -0.95, 0.55, -0.72],
+  [0.55, -0.45, 0.15, -0.2, 0, 0],
+];
+
+/* ---------------- Pengaturan semanggi ---------------- */
+const CLOVER_WIDTH = 1.4; // kegemukan daun (jangan di bawah 1.4, nanti ada celah di tengah)
+const CLOVER_START_DESKTOP = 0.34; // setengah lebar semanggi awal, sebagai pecahan tinggi layar
+const CLOVER_START_MOBILE = 0.44; // sama, tapi sebagai pecahan lebar layar (HP)
+const CLOVER_SPIN = 20; // derajat putaran selama membuka (0 = tidak berputar)
+/* ------------------------------------------------------ */
+
+const CLOVER_HALF = 0.61 + 0.36 * CLOVER_WIDTH; // setengah lebar total semanggi (satuan r)
+const CLOVER_FILL = 0.78; // radius lingkaran terbesar yang selalu terisi penuh (satuan r)
+
+function cloverPath(cx, cy, r, rotDeg) {
+  let d = '';
+  for (let k = 0; k < 4; k++) {
+    const a = ((45 + 90 * k + rotDeg) * Math.PI) / 180;
+    const cos = Math.cos(a);
+    const sin = Math.sin(a);
+    const pt = (x, y) => {
+      const lx = x * CLOVER_WIDTH;
+      return `${(cx + r * (lx * cos - y * sin)).toFixed(1)} ${(cy + r * (lx * sin + y * cos)).toFixed(1)}`;
+    };
+    d += `M${cx.toFixed(1)} ${cy.toFixed(1)}`;
+    CLOVER_SEG.forEach(([x1, y1, x2, y2, x3, y3]) => {
+      d += `C${pt(x1, y1)} ${pt(x2, y2)} ${pt(x3, y3)} `;
+    });
+    d += 'Z';
+  }
+  return d;
 }
 
 /* ------------------------------------------------------------------ */
@@ -311,13 +363,24 @@ function GalleryScene() {
       return {
         onProgress(p) {
           const desktop = window.innerWidth >= 768;
-          const insetY = desktop ? 16 : 20;
-          const insetX = desktop ? 24 : 10;
-          const radius = desktop ? 24 : 18;
+          const W = frame.clientWidth;
+          const H = frame.clientHeight;
 
-          // Jendela melebar + wall di-zoom-out
+          // r = ukuran satu daun. Mulai kecil, akhirnya cukup besar buat menutup seluruh layar
+          const half = desktop
+            ? H * CLOVER_START_DESKTOP
+            : Math.min(W * CLOVER_START_MOBILE, H * 0.3);
+          const r0 = half / CLOVER_HALF;
+          const rMax = (Math.hypot(W, H) / 2 / CLOVER_FILL) * 1.04;
+
+          // Semanggi membesar sambil sedikit berputar + wall di-zoom-out
           const e = easeInOut(seg(p, 0, 0.34));
-          frame.style.clipPath = `inset(${mix(insetY, 0, e)}% ${mix(insetX, 0, e)}% round ${mix(radius, 0, e)}px)`;
+          const clip =
+            e >= 0.999
+              ? 'none'
+              : `path('${cloverPath(W / 2, H / 2, r0 * Math.pow(rMax / r0, e), mix(CLOVER_SPIN, 0, e))}')`;
+          frame.style.clipPath = clip;
+          frame.style.webkitClipPath = clip;
           wall.style.transform = `scale(${mix(1.3, 1, e)})`;
 
           // Baris teks naik dari balik topeng
@@ -392,8 +455,14 @@ function GalleryScene() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Scene: Momen                                                         */
+/* Scene: Momen (gaya scrapbook)                                        */
 /* ------------------------------------------------------------------ */
+
+const BAND_INSET = '12%'; // jarak lembaran kertas dari atas/bawah area carousel (desktop)
+const EDGE_FADE = '7%'; // lebar pudar tepi kiri/kanan carousel (desktop)
+const MOBILE_TILT = 1.8; // derajat miring polaroid yang tidak aktif (HP)
+
+const EDGE_MASK = `linear-gradient(to right, transparent 0, #000 ${EDGE_FADE}, #000 calc(100% - ${EDGE_FADE}), transparent 100%)`;
 
 function MomentsScene() {
   const ref = useRef(null);
@@ -432,67 +501,105 @@ function MomentsScene() {
     <section
       id="moments"
       ref={ref}
-      className="flex min-h-svh flex-col bg-paper pb-14 pt-24 md:pb-20 md:pt-32"
+      className="relative flex min-h-svh flex-col overflow-hidden bg-cream pb-14 pt-24 md:pb-20 md:pt-32"
     >
-      <div className="mx-auto mb-10 flex w-full max-w-6xl flex-col gap-6 px-5 md:mb-12 md:flex-row md:items-end md:justify-between md:px-10">
-        <div className="max-w-xl">
-          <h2
-            data-r
-            className={`${DISPLAY} mb-4 text-[clamp(2.8rem,7vw,5rem)] leading-none text-ink`}
-          >
-            LUCUUKK
-          </h2>
-          <p data-r className="text-sm leading-relaxed text-ink-soft md:text-base">
-            nanti kalo meet videonya aku tambahin sama video kita yaahh EHEHE
-          </p>
+      <ScrapStyles />
+      <MomentsBackdrop />
+
+      {/* Judul: label kertas + sticky note (rotasi di elemen dalam, biar tidak bentrok dengan data-r) */}
+      <div className="relative z-10 mx-auto mb-10 flex w-full max-w-6xl flex-col gap-8 px-5 md:mb-12 md:flex-row md:items-end md:gap-12 md:px-10">
+        <div data-r>
+          <div className="relative inline-block -rotate-2 bg-[#faf4eb] px-8 pb-6 pt-9 shadow-[0_10px_22px_-8px_rgba(40,20,70,0.45)]">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.3] mix-blend-multiply"
+              style={NOISE}
+            />
+            <Washi className="-top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-3" />
+            <h2
+              className={`${HAND} relative text-[clamp(3.2rem,9vw,6rem)] font-bold leading-[0.95]`}
+              style={{ color: INK }}
+            >
+              LUCUUKK
+            </h2>
+            <Squiggle className="relative mt-2 w-32 md:w-40" />
+            <StarS className="absolute -right-3 -top-3 h-7 w-7 rotate-12" />
+          </div>
+        </div>
+
+        <div data-r>
+          <div className="relative max-w-xs rotate-2 bg-[#fbeaa9] px-5 pb-5 pt-8 shadow-[0_8px_16px_-6px_rgba(60,35,80,0.4)]">
+            <Washi className="-top-3 left-1/2 h-6 w-20 -translate-x-1/2 -rotate-3" color={TAPES[0]} />
+            <p className={`${HAND} text-2xl leading-[1.15]`} style={{ color: INK }}>
+              nanti kalo meet videonya aku tambahin sama video kita yaahh EHEHE{' '}
+              <HeartS className="inline-block h-5 w-5 align-[-3px]" />
+            </p>
+          </div>
         </div>
       </div>
 
       {isDesktop ? (
-        /* DESKTOP: full lebar, menyatu dengan background section */
-        <div data-r className="relative h-[86svh] min-h-[480px] w-full overflow-hidden">
-          <FlexCarousel
-            items={carouselItems}
-            preset="liquid"
-            intro="rise"
-            cardHeight={0.56}
-            gap={64}
-            radius={10}
-            squeeze={0.1}
-            focusOnClick={false}
-            playBadge
-            badgeLabel="Putar video"
-            captions
-            autoplay
-            interval={4}
-            onSelect={handleSelectMedia}
-          />
+        /* DESKTOP: kartu "ditempel" di lembaran kertas berjahit */
+        <div data-r className="relative z-10 h-[86svh] min-h-[480px] w-full overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{ WebkitMaskImage: EDGE_MASK, maskImage: EDGE_MASK }}
+          >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-[2%] -rotate-[0.6deg] border-y-[3px] border-dashed border-purple-300/70 bg-[#fffdf8]/60 shadow-[0_18px_40px_-20px_rgba(60,35,80,0.35)]"
+              style={{ top: BAND_INSET, bottom: BAND_INSET }}
+            >
+              <div
+                className="absolute inset-0 opacity-[0.25] mix-blend-multiply"
+                style={NOISE}
+              />
+            </div>
 
-          {/* Pudar di tepi kiri/kanan supaya kartu tidak terpotong kasar */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-linear-to-r from-paper to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-linear-to-l from-paper to-transparent" />
+            <FlexCarousel
+              items={carouselItems}
+              preset="liquid"
+              intro="rise"
+              cardHeight={0.56}
+              gap={64}
+              radius={10}
+              squeeze={0.1}
+              focusOnClick={false}
+              playBadge
+              badgeLabel="Putar video"
+              captions
+              autoplay
+              interval={4}
+              onSelect={handleSelectMedia}
+            />
+          </div>
         </div>
       ) : (
-        /* HP: carousel geser biasa, kartu aktif menonjol */
-        <div data-r className="w-full">
+        /* HP: polaroid bertape, geser kiri-kanan */
+        <div data-r className="relative z-10 w-full">
           <div
             ref={trackRef}
             onScroll={onTrackScroll}
-            className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-[12vw] pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-[12vw] pb-6 pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {carouselItems.map((item, i) => {
               const img = getImage(item);
               const isActive = i === mobileIndex;
+              const tilt = isActive ? 0 : i % 2 === 0 ? -MOBILE_TILT : MOBILE_TILT;
               return (
                 <button
                   key={item.id ?? i}
                   type="button"
                   onClick={() => handleSelectMedia(i, item)}
-                  className={`w-[76vw] max-w-[340px] flex-none snap-center text-left transition-all duration-500 ease-out ${
-                    isActive ? 'scale-100 opacity-100' : 'scale-[0.94] opacity-50'
+                  className={`relative w-[76vw] max-w-[340px] flex-none snap-center bg-[#fffdf8] p-3 pb-4 text-left shadow-[0_14px_26px_-10px_rgba(40,20,70,0.45)] transition-all duration-500 ease-out ${
+                    isActive ? 'scale-100 opacity-100' : 'scale-[0.94] opacity-60'
                   }`}
+                  style={{ transform: `rotate(${tilt}deg)` }}
                 >
-                  <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[14px] border border-line bg-[#fffdf9] shadow-[0_10px_25px_-10px_rgba(60,40,75,0.15)]">
+                  <Washi
+                    className="-top-3 left-1/2 h-6 w-20 -translate-x-1/2 -rotate-3"
+                    color={TAPES[i % TAPES.length]}
+                  />
+                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#e6dcf5]">
                     {img ? (
                       <img
                         src={img}
@@ -511,18 +618,24 @@ function MomentsScene() {
                       />
                     ) : null}
                     {item.videoUrl && (
-                      <span className="absolute bottom-3 left-1/2 inline-flex h-9 -translate-x-1/2 items-center gap-2 rounded-full border border-white/30 bg-black/50 pl-3 pr-4 text-xs font-medium text-white backdrop-blur-md">
+                      <span className="absolute bottom-3 left-1/2 inline-flex h-9 -translate-x-1/2 items-center gap-2 rounded-full border border-white/30 bg-[#54325c]/80 pl-3 pr-4 text-xs font-medium text-white backdrop-blur-md">
                         <Play className="h-3.5 w-3.5 fill-current" />
                         Putar video
                       </span>
                     )}
                   </div>
-                  <div className="mt-4 px-1">
-                    <p className="font-display text-xl font-medium leading-tight text-ink">
+                  <div className="mt-3 px-1">
+                    <p
+                      className={`${HAND} text-[1.7rem] font-bold leading-[1.05]`}
+                      style={{ color: INK }}
+                    >
                       {getTitle(item)}
                     </p>
                     {getSub(item) && (
-                      <p className="mt-1 line-clamp-2 text-sm leading-snug text-ink-soft">
+                      <p
+                        className={`${HAND} mt-1 line-clamp-2 text-lg leading-tight opacity-70`}
+                        style={{ color: INK }}
+                      >
                         {getSub(item)}
                       </p>
                     )}
@@ -532,18 +645,24 @@ function MomentsScene() {
             })}
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-3 text-xs tabular-nums text-ink/60">
-            <span>{pad(mobileIndex + 1)}</span>
-            <span className="relative h-[2px] w-24 overflow-hidden rounded-full bg-ink/10">
+          <div className="mt-4 flex items-center justify-center gap-3 text-ink/70">
+            <span className={`${HAND} text-2xl`}>{pad(mobileIndex + 1)}</span>
+            <span className="relative h-[3px] w-24 overflow-hidden rounded-full bg-ink/10">
               <span
                 className="absolute inset-y-0 left-0 rounded-full bg-purple-600 transition-[width] duration-300"
                 style={{ width: `${((mobileIndex + 1) / carouselItems.length) * 100}%` }}
               />
             </span>
-            <span className="text-ink/35">{pad(carouselItems.length)}</span>
+            <span className={`${HAND} text-2xl text-ink/40`}>{pad(carouselItems.length)}</span>
           </div>
         </div>
       )}
+
+      <p className={`${HAND} relative z-10 mt-6 text-center text-lg text-ink-soft`}>
+        {isDesktop
+          ? 'arahkan kursor ke kartu, klik buat putar videonya'
+          : 'geser, terus ketuk kartunya buat putar video'}
+      </p>
 
       <VideoPlayerModal
         isOpen={isModalOpen}
